@@ -66,7 +66,7 @@ techniek: "Gietwerk (verloren was)"
 materiaal: "Brons"
 afmetingen: "32 × 20 × 24 cm"
 beschikbaar: true
-tags: ["Moniek", "Anneke"]
+tags: ["Cleo", "Anneke"]
 beschrijving: |
   Vrije tekst over het werk. Je kunt **vet** en *cursief* gebruiken,
   en meerdere regels.
@@ -89,10 +89,10 @@ beschrijving: |
 - `tags` is een lijst van **personen** die het werk voorstelt (op de website
   heet dit *Personen*). Elke tag
   krijgt een eigen overzichtspagina met alle werken met die tag, uit alle
-  categorieën (bijvoorbeeld `/tags/moniek/`; alle tags staan onder **Werk** in het
+  categorieën (bijvoorbeeld `/tags/cleo/`; alle tags staan onder **Werk** in het
   menu). Op de pagina van een categorie kun je met knoppen boven de foto's
-  filteren op tag. Schrijf een tag steeds op dezelfde manier: `Moniek` en
-  `moniek` worden wel samengevoegd, maar `Monique` niet. Dat geldt ook voor
+  filteren op tag. Schrijf een tag steeds op dezelfde manier: `Cleo` en
+  `cleo` worden wel samengevoegd, maar `Clio` niet. Dat geldt ook voor
   technieken en materialen.
 - Op de startpagina wordt elke dag een andere tag uitgelicht (het grote blok),
   met de foto van het eerste werk met die tag.
