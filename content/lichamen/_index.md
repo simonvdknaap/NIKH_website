@@ -1,5 +1,6 @@
 ---
 title: Lichamen
+layout: album
 weight: 4
 menus: "main"
 categories: ["lichamen"]

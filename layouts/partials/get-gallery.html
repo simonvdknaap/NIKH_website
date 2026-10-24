@@ -11,7 +11,7 @@
   {{ $color := index $thumbnail.Colors 0 | default "transparent" }}
   {{ $imageCount := 0 }}
   {{ $albumCount := 0 }}
-  {{ if .IsPage }}
+  {{ if or .IsPage (eq .Layout "album") }}
     {{ $imageCount = len $images }}
   {{ else }}
     {{ range where .RegularPagesRecursive "Params.private" "ne" true }}

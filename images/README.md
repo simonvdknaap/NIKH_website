@@ -25,4 +25,35 @@ l_staande-figuur.jpg     -> Lichamen
   zet dan `feature` in de bestandsnaam, bijvoorbeeld `K_feature-portret.jpg`.
 - Na een push naar `main` wordt de website automatisch opnieuw gepubliceerd.
 
-De verdeling gebeurt in `content/_content.gotmpl`.
+## Informatie over een werk
+
+Elke foto krijgt een eigen pagina, die opent als je in een album op de foto
+klikt. De informatie op die pagina komt uit een `.yaml`-bestand met
+**dezelfde naam** als de foto:
+
+```
+K_portret-oude-man.jpg
+K_portret-oude-man.yaml
+```
+
+Inhoud van het `.yaml`-bestand (alle velden zijn optioneel):
+
+```yaml
+titel: "Portret van een oude man"
+jaar: 1987
+techniek: "Gietwerk (verloren was)"
+materiaal: "Brons"
+afmetingen: "32 × 20 × 24 cm"
+beschrijving: |
+  Vrije tekst over het werk. Je kunt **vet** en *cursief* gebruiken,
+  en meerdere regels.
+```
+
+- Velden die ontbreken worden niet getoond.
+- Zonder `titel` wordt de bestandsnaam de titel: `K_portret-oude-man.jpg`
+  wordt "Portret oude man".
+- Zonder `.yaml`-bestand krijgt de foto ook een pagina, alleen met de titel
+  en de categorie.
+
+De verdeling en de pagina's worden gemaakt in `content/_content.gotmpl`;
+de opmaak van de pagina staat in `layouts/_default/werk.html`.

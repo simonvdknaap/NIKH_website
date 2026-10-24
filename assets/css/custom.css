@@ -1,1 +1,77 @@
 /* custom.css */
+
+/* Pagina van één werk */
+.werk {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 3rem;
+  align-items: start;
+  max-width: 1280px;
+  margin: 2rem auto 0;
+  padding: 0 1.5rem;
+}
+
+.werk-afbeelding {
+  display: block;
+  background: var(--surface-2);
+  border-radius: 0.5rem;
+  overflow: hidden;
+  cursor: zoom-in;
+}
+
+.werk-afbeelding img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.werk-info h1 {
+  margin: 0 0 1.5rem;
+  font-size: 2rem;
+  line-height: 1.2;
+  text-align: left;
+}
+
+.werk-info dl {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.75rem 1.5rem;
+  margin: 0;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.werk-info dt {
+  color: var(--text-2);
+}
+
+.werk-info dd {
+  margin: 0;
+}
+
+.werk-beschrijving {
+  margin-top: 1.5rem;
+  line-height: 1.7;
+}
+
+.werk-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  max-width: 1280px;
+  margin: 3rem auto 0;
+  padding: 0 1.5rem;
+}
+
+@media (max-width: 800px) {
+  .werk {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 0 1rem;
+  }
+
+  .werk-nav {
+    padding: 0 1rem;
+  }
+}

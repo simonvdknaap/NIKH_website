@@ -1,8 +1,13 @@
 {{/*
-  Verdeelt de foto's uit de map images/ over de albums.
+  Verdeelt de foto's uit de map images/ over de albums en maakt voor elke
+  foto een eigen pagina met informatie over het werk.
+
   De eerste letter van de bestandsnaam bepaalt het album:
     K = Koppen, P = Penningen, B = Buste, L = Lichamen
   Bestanden met een andere eerste letter worden overgeslagen (met een waarschuwing).
+
+  Informatie over een werk staat in een .yaml-bestand met dezelfde naam als de
+  foto (bijvoorbeeld K_portret.jpg + K_portret.yaml). Zie images/README.md.
 */}}
 {{ $albums := dict "k" "koppen" "p" "penningen" "b" "buste" "l" "lichamen" }}
 {{ range resources.Match "images/*" }}
@@ -10,9 +15,38 @@
     {{ $name := path.Base .Name }}
     {{ $album := index $albums (substr $name 0 1 | lower) }}
     {{ if $album }}
+      {{ $base := strings.TrimSuffix (path.Ext $name) $name }}
+      {{ $slug := $base | urlize | lower }}
+
+      {{ $info := dict }}
+      {{ with resources.Get (printf "images/%s.yaml" $base) }}
+        {{ $info = . | transform.Unmarshal }}
+      {{ end }}
+
+      {{/* Zonder titel: maak er een van de bestandsnaam, "K_oude-man" -> "Oude man" */}}
+      {{ $title := $info.titel | default ($base | replaceRE `^[a-zA-Z][-_ ]*` "" | replaceRE `[-_]+` " " | strings.FirstUpper) }}
+
+      {{/* Foto in het album; params.werk verwijst naar de pagina van het werk */}}
       {{ $.AddResource (dict
         "path" (printf "%s/%s" $album $name)
         "content" (dict "value" .)
+        "title" $title
+        "params" (dict "werk" $slug)
+      ) }}
+
+      {{/* Pagina van het werk, met dezelfde foto */}}
+      {{ $.AddPage (dict
+        "path" (printf "%s/%s" $album $slug)
+        "title" $title
+        "kind" "page"
+        "layout" "werk"
+        "params" (merge $info (dict "afbeelding" $name))
+        "build" (dict "list" "never")
+      ) }}
+      {{ $.AddResource (dict
+        "path" (printf "%s/%s/%s" $album $slug $name)
+        "content" (dict "value" .)
+        "title" $title
       ) }}
     {{ else }}
       {{ warnf "images/%s: bestandsnaam begint niet met K, P, B of L; foto wordt overgeslagen" $name }}

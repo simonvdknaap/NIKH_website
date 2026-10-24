@@ -1,0 +1,61 @@
+{{/* Pagina van één werk. De gegevens komen uit images/<naam>.yaml */}}
+{{ define "main" }}
+  {{ $album := .Parent }}
+  <article class="werk">
+    {{ with .Resources.GetMatch .Params.afbeelding }}
+      {{ $full := .Filter (slice images.AutoOrient (images.Process "fit 1600x1600")) }}
+      {{ $display := .Filter (slice images.AutoOrient (images.Process "fit 1000x1000")) }}
+      <a class="werk-afbeelding" href="{{ $full.RelPermalink }}" title="Vergroot">
+        <img src="{{ $display.RelPermalink }}" width="{{ $display.Width }}" height="{{ $display.Height }}" alt="{{ $.Title }}" />
+      </a>
+    {{ end }}
+
+    <div class="werk-info">
+      <h1>{{ .Title }}</h1>
+      <dl>
+        {{ with $album }}
+          <dt>Categorie</dt>
+          <dd><a href="{{ .RelPermalink }}">{{ .Title }}</a></dd>
+        {{ end }}
+        {{ range slice
+          (slice "Jaar" .Params.jaar)
+          (slice "Techniek" .Params.techniek)
+          (slice "Materiaal" .Params.materiaal)
+          (slice "Afmetingen" .Params.afmetingen)
+        }}
+          {{ $label := index . 0 }}
+          {{ with index . 1 }}
+            <dt>{{ $label }}</dt>
+            <dd>{{ . }}</dd>
+          {{ end }}
+        {{ end }}
+      </dl>
+      {{ with .Params.beschrijving }}
+        <div class="werk-beschrijving">{{ . | markdownify }}</div>
+      {{ end }}
+    </div>
+  </article>
+
+  {{/* Vorige / volgende werk in hetzelfde album, op volgorde van bestandsnaam */}}
+  {{ with $album }}
+    {{ $slugs := slice }}
+    {{ range sort (.Resources.ByType "image") "Name" }}
+      {{ with .Params.werk }}{{ $slugs = $slugs | append . }}{{ end }}
+    {{ end }}
+    {{ $current := path.Base $.Path }}
+    {{ $prev := "" }}
+    {{ $next := "" }}
+    {{ range $i, $s := $slugs }}
+      {{ if eq $s $current }}
+        {{ if gt $i 0 }}{{ $prev = $album.GetPage (index $slugs (sub $i 1)) }}{{ end }}
+        {{ if lt $i (sub (len $slugs) 1) }}{{ $next = $album.GetPage (index $slugs (add $i 1)) }}{{ end }}
+      {{ end }}
+    {{ end }}
+    {{ if or $prev $next }}
+      <nav class="werk-nav">
+        {{ with $prev }}<a class="btn" href="{{ .RelPermalink }}" rel="prev">&larr; {{ .Title }}</a>{{ else }}<span></span>{{ end }}
+        {{ with $next }}<a class="btn" href="{{ .RelPermalink }}" rel="next">{{ .Title }} &rarr;</a>{{ end }}
+      </nav>
+    {{ end }}
+  {{ end }}
+{{ end }}

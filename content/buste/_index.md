@@ -1,5 +1,6 @@
 ---
 title: Buste
+layout: album
 weight: 3
 menus: "main"
 categories: ["buste"]
