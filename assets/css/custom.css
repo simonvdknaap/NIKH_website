@@ -37,7 +37,7 @@ html.dark {
   border-radius: 0;
 }
 
-/* Lettertype voor de kop (sitenaam en titel op de startpagina) */
+/* Lettertype voor de koppen */
 @font-face {
   font-family: "Cormorant Garamond";
   font-style: normal;
@@ -46,20 +46,23 @@ html.dark {
   src: url("../fonts/cormorant-garamond-latin-300-normal.woff2") format("woff2");
 }
 
-body > header > .btn:not(.btn-square),
-.home-intro h1 {
+/* Koppen op alle pagina's (niet het logo linksboven, niet de labels op de startpagina) */
+main h1,
+main h2,
+main h3 {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 300;
+  font-variant-numeric: lining-nums;
 }
 
-body > header > .btn:not(.btn-square) {
-  font-size: 1.75rem;
-  letter-spacing: 0.12em;
+main .home-caption h2 {
+  font-family: inherit;
+  font-weight: 400;
 }
 
 hgroup h1 {
-  font-weight: 400;
-  letter-spacing: -0.01em;
+  font-size: clamp(2.5rem, calc(1.75rem + 3vw), 4rem);
+  line-height: 1.1;
 }
 
 /* Startpagina */
@@ -204,7 +207,7 @@ hgroup h1 {
 
 .werk-info h1 {
   margin: 0 0 1.5rem;
-  font-size: 2rem;
+  font-size: 2.5rem;
   line-height: 1.2;
   text-align: left;
 }
@@ -269,7 +272,7 @@ hgroup h1 {
 
 .werk-form h2 {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.6rem;
 }
 
 .werk-form p {
