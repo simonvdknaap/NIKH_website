@@ -11,3 +11,8 @@ theme = 'kaiser'
 [[module.mounts]]
   source = 'images'
   target = 'assets/images'
+
+# Repository waar het invulformulier op de werkpagina's de .yaml-bestanden opslaat
+[params]
+  github_repo = 'simonvdknaap/NIKH_website'
+  github_branch = 'main'

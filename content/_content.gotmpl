@@ -19,8 +19,10 @@
       {{ $slug := $base | urlize | lower }}
 
       {{ $info := dict }}
+      {{ $heeftInfo := false }}
       {{ with resources.Get (printf "images/%s.yaml" $base) }}
-        {{ $info = . | transform.Unmarshal }}
+        {{ $info = . | transform.Unmarshal | default dict }}
+        {{ $heeftInfo = true }}
       {{ end }}
 
       {{/* Zonder titel: maak er een van de bestandsnaam, "K_oude-man" -> "Oude man" */}}
@@ -40,7 +42,7 @@
         "title" $title
         "kind" "page"
         "layout" "werk"
-        "params" (merge $info (dict "afbeelding" $name))
+        "params" (merge $info (dict "afbeelding" $name "bestand" $base "heeft_info" $heeftInfo))
         "build" (dict "list" "never")
       ) }}
       {{ $.AddResource (dict
