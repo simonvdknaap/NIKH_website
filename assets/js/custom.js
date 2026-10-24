@@ -113,7 +113,7 @@ function maakYaml(form) {
     if (veld === "materiaal" && materialen.length > 1) regels.push(`${veld}: ${JSON.stringify(materialen)}`);
     else regels.push(`${veld}: ${yamlWaarde(value)}`);
   }
-  if (data.get("te_koop")) regels.push("te_koop: true");
+  if (data.get("beschikbaar")) regels.push("beschikbaar: true");
   const tags = (data.get("tags") || "")
     .split(",")
     .map((tag) => tag.trim())
