@@ -37,7 +37,15 @@ html.dark {
   border-radius: 0;
 }
 
-/* Lettertype voor de hoofdtitels (h1) */
+/* Lettertype voor de hoofdtitels (h1, vet) en het logo (normaal) */
+@font-face {
+  font-family: "Cormorant Garamond";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../fonts/cormorant-garamond-latin-400-normal.woff2") format("woff2");
+}
+
 @font-face {
   font-family: "Cormorant Garamond";
   font-style: normal;
@@ -46,12 +54,21 @@ html.dark {
   src: url("../fonts/cormorant-garamond-latin-700-normal.woff2") format("woff2");
 }
 
-/* Koppen: vet. Alleen de hoofdtitels (h1) in de serif; de rest in het gewone lettertype */
+/* Alleen de hoofdtitels (h1) vet en in de serif; al het andere normaal */
 main h1,
 main h2,
 main h3 {
-  font-weight: 700;
+  font-weight: 400;
   font-variant-numeric: lining-nums;
+}
+
+main h1 {
+  font-weight: 700;
+}
+
+main .card > div > h2,
+body > header .btn {
+  font-weight: 400;
 }
 
 main h1,
@@ -61,7 +78,7 @@ body > header .header-logo {
 
 /* Logo NIKH linksboven, in de serif */
 body > header .header-logo {
-  font-weight: 700;
+  font-weight: 400;
   font-size: 1.75rem;
   letter-spacing: 0.04em;
 }
@@ -159,10 +176,8 @@ hgroup h1 {
   }
 }
 
-/* Op de startpagina is alleen de h1 vet */
 main .home-caption h2 {
   font-size: 1rem;
-  font-weight: 400;
 }
 
 .home-caption p {
