@@ -25,14 +25,35 @@ l_staande-figuur.jpg     -> Lichamen
   zet dan `feature` in de bestandsnaam, bijvoorbeeld `K_feature-portret.jpg`.
 - Na een push naar `main` wordt de website automatisch opnieuw gepubliceerd.
 
-## Informatie over een werk
+## Meerdere foto's van één werk
 
-Elke foto krijgt een eigen pagina, die opent als je in een album op de foto
-klikt. De informatie op die pagina komt uit een `.yaml`-bestand met
-**dezelfde naam** als de foto:
+Geef de foto's dezelfde naam met een volgnummer aan het eind (1 of 2 cijfers,
+na `-` of `_`):
 
 ```
-K_portret-oude-man.jpg
+K_portret-oude-man-1.jpg   <- hoofdfoto
+K_portret-oude-man-2.jpg
+K_portret-oude-man-3.jpg
+```
+
+- Foto **1** is de hoofdfoto: alleen die verschijnt op de startpagina, in de
+  categorieën, bij Werk en in de filters. Is er geen 1, dan het laagste nummer.
+- Op de pagina van het werk staan alle foto's: de hoofdfoto groot, met kleine
+  foto's eronder om te wisselen.
+- Een foto zonder nummer is een werk met één foto. Let op: een naam die eindigt
+  op `-` of `_` met 1 of 2 cijfers telt als volgnummer; een jaartal
+  (`P_penning-1987.jpg`) niet.
+- Het `.yaml`-bestand heeft de naam van het werk **zonder** nummer:
+  `K_portret-oude-man.yaml`.
+
+## Informatie over een werk
+
+Elk werk krijgt een eigen pagina, die opent als je in een album op de foto
+klikt. De informatie op die pagina komt uit een `.yaml`-bestand met de naam
+van het werk (de bestandsnaam van de foto, zonder volgnummer):
+
+```
+K_portret-oude-man-1.jpg
 K_portret-oude-man.yaml
 ```
 
