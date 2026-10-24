@@ -1,0 +1,4 @@
+{{/* Returns the cover image of a page: the resource marked cover, else the first image. */}}
+{{ $images := .Resources.ByType "image" }}
+{{ $cover := index (where $images "Params.cover" true) 0 | default (index $images 0) }}
+{{ return $cover }}

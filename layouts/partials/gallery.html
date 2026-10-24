@@ -1,0 +1,12 @@
+{{ $images := where (.Resources.ByType "image") "Params.hidden" "!=" true }}
+{{ if $images }}
+  <div class="gallery">
+    {{ range $images }}
+      {{ $thumb := .Resize "800x webp" }}
+      <figure>
+        <a href="{{ .RelPermalink }}"><img src="{{ $thumb.RelPermalink }}" width="{{ $thumb.Width }}" height="{{ $thumb.Height }}" alt="{{ .Title }}" loading="lazy"></a>
+        {{ if and .Title (ne .Title .Name) }}<figcaption>{{ .Title }}</figcaption>{{ end }}
+      </figure>
+    {{ end }}
+  </div>
+{{ end }}

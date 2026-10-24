@@ -1,0 +1,17 @@
+{{ define "main" }}
+  <section class="intro">
+    <h1>{{ site.Params.author }}</h1>
+    {{ with .Description }}<p>{{ . }}</p>{{ end }}
+    {{ .Content }}
+  </section>
+  {{ $featured := where site.RegularPages "Params.featured" true }}
+  {{ with $featured }}
+    <h2>Featured</h2>
+    <div class="cards">{{ range . }}{{ partial "card.html" . }}{{ end }}</div>
+  {{ end }}
+  {{ $albums := where (where .Pages "Params.private" "!=" true) "Layout" "!=" "prose" }}
+  {{ with $albums }}
+    <h2>Albums</h2>
+    <div class="cards">{{ range .ByWeight }}{{ partial "card.html" . }}{{ end }}</div>
+  {{ end }}
+{{ end }}

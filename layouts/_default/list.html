@@ -1,0 +1,14 @@
+{{ define "main" }}
+  <section class="intro">
+    <h1>{{ .Title }}</h1>
+    {{ with .Description }}<p>{{ . }}</p>{{ end }}
+    {{ .Content }}
+  </section>
+  {{ $pages := where .Pages "Params.private" "!=" true }}
+  {{ if $pages }}
+    <div class="cards">
+      {{ range $pages.ByWeight }}{{ partial "card.html" . }}{{ end }}
+    </div>
+  {{ end }}
+  {{ partial "gallery.html" . }}
+{{ end }}
