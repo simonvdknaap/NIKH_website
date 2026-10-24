@@ -1,9 +1,0 @@
-<a class="card" href="{{ .RelPermalink }}">
-  {{ with partial "cover.html" . }}
-    {{ $img := .Fill "600x400 smart webp" }}
-    <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="" loading="lazy">
-  {{ else }}
-    <div class="placeholder" aria-hidden="true"></div>
-  {{ end }}
-  <span class="card-title">{{ .Title }}</span>
-</a>

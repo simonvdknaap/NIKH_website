@@ -1,29 +1,12 @@
 <!doctype html>
-<html lang="{{ site.LanguageCode | default "en" }}">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{{ if .IsHome }}{{ site.Title }}{{ else }}{{ .Title }} · {{ site.Title }}{{ end }}</title>
-  {{ with .Description }}<meta name="description" content="{{ . }}">{{ end }}
-  {{ if .Params.private }}<meta name="robots" content="noindex">{{ end }}
-  {{ $css := resources.Get "css/main.css" | minify | fingerprint }}
-  <link rel="stylesheet" href="{{ $css.RelPermalink }}">
-</head>
-<body>
-  <header class="site-header">
-    <a class="brand" href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a>
-    <nav>
-      {{ range site.Menus.main }}
-        <a href="{{ .URL }}"{{ if $.IsMenuCurrent "main" . }} aria-current="page"{{ end }}>{{ .Name }}</a>
-      {{ end }}
-    </nav>
-  </header>
-  <main>
-    {{ block "main" . }}{{ end }}
-  </main>
-  <footer class="site-footer">
-    <span>&copy; {{ now.Year }} {{ site.Params.author }}</span>
-    {{ range site.Menus.footer }}<a href="{{ .URL }}">{{ .Name }}</a>{{ end }}
-  </footer>
-</body>
+{{- $theme := .Params.theme | default .Site.Params.defaultTheme }}
+<html class="{{- if (eq $theme "light") -}}light{{- else if (eq $theme "dark") }}dark{{ end }}" lang="{{- site.LanguageCode | default "en" -}}">
+  {{ partial "head.html" . }}
+  <body>
+    {{ block "header" . }}{{ partial "header.html" . }}{{ end }}
+    <main>
+      {{ block "main" . }}{{ end }}
+    </main>
+    {{ block "footer" . }}{{ partialCached "footer.html" . }}{{ end }}
+  </body>
 </html>

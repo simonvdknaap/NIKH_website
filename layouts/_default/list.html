@@ -1,14 +1,8 @@
 {{ define "main" }}
-  <section class="intro">
-    <h1>{{ .Title }}</h1>
-    {{ with .Description }}<p>{{ . }}</p>{{ end }}
-    {{ .Content }}
+  {{ partial "title.html" . }}
+  <section class="galleries">
+    {{ range where .Pages "Params.private" "ne" true }}
+      {{ partial "album-card.html" . }}
+    {{ end }}
   </section>
-  {{ $pages := where .Pages "Params.private" "!=" true }}
-  {{ if $pages }}
-    <div class="cards">
-      {{ range $pages.ByWeight }}{{ partial "card.html" . }}{{ end }}
-    </div>
-  {{ end }}
-  {{ partial "gallery.html" . }}
 {{ end }}

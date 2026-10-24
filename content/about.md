@@ -7,4 +7,4 @@ menu:
     weight: 90
 ---
 
-This is a demonstration site for the Hugo Gallery theme.
+Dit is de eerste versie van de NIKH gallerie website.

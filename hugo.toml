@@ -1,12 +1,4 @@
 baseURL = 'https://simonvdknaap.github.io/NIKH_website/'
 languageCode = 'en-us'
 title = 'NIKH'
-
-[params]
-  author = 'Herman Hopman'
-
-[menus]
-  [[menus.footer]]
-    name = 'GitHub'
-    url = 'https://github.com/simonvdknaap/NIKH_website'
-    weight = 10
+theme = 'kaiser'

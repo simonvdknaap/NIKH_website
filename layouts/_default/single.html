@@ -1,8 +1,10 @@
 {{ define "main" }}
-  <section class="intro">
-    <h1>{{ .Title }}</h1>
-    {{ with .Description }}<p>{{ . }}</p>{{ end }}
-    {{ .Content }}
-  </section>
+  {{ partial "title.html" . }}
   {{ partial "gallery.html" . }}
+  {{ partial "related.html" . }}
+  {{ with .Content }}
+    <section class="prose">
+      {{ . }}
+    </section>
+  {{ end }}
 {{ end }}
