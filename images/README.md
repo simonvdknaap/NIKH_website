@@ -55,5 +55,23 @@ beschrijving: |
 - Zonder `.yaml`-bestand krijgt de foto ook een pagina, alleen met de titel
   en de categorie.
 
+## Invullen via de website
+
+Je kunt de gegevens ook op de website zelf invullen:
+
+1. Open de website één keer met `?beheer=1` achter het adres, bijvoorbeeld
+   <https://simonvdknaap.github.io/NIKH_website/?beheer=1>. Deze browser
+   onthoudt dat je in beheermodus bent (uitzetten: `?beheer=0`).
+2. Open een werk zonder gegevens: onder de foto staat nu een formulier.
+3. Vul de velden in en klik op **Opslaan**. GitHub opent met het
+   `.yaml`-bestand al ingevuld; klik daar op **Commit changes**.
+4. Na een paar minuten staat de informatie op de website.
+
+Bij een werk dat al gegevens heeft, staat in beheermodus een knop
+**Gegevens bewerken op GitHub**.
+
+Opslaan kan alleen met een GitHub-account dat schrijfrechten heeft op deze
+repository. Gewone bezoekers zien het formulier niet.
+
 De verdeling en de pagina's worden gemaakt in `content/_content.gotmpl`;
 de opmaak van de pagina staat in `layouts/_default/werk.html`.

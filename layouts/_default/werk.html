@@ -33,6 +33,32 @@
       {{ with .Params.beschrijving }}
         <div class="werk-beschrijving">{{ . | markdownify }}</div>
       {{ end }}
+
+      {{/* Beheer: alleen zichtbaar in beheermodus (?beheer=1), zie assets/js/custom.js */}}
+      {{ with site.Params.github_repo }}
+        {{ $repo := . }}
+        {{ $branch := site.Params.github_branch | default "main" }}
+        {{ if $.Params.heeft_info }}
+          <p class="werk-beheer" hidden>
+            <a class="btn" href="https://github.com/{{ $repo }}/edit/{{ $branch }}/images/{{ $.Params.bestand }}.yaml" target="_blank" rel="noopener">Gegevens bewerken op GitHub</a>
+          </p>
+        {{ else }}
+          <form class="werk-form werk-beheer" hidden
+            data-repo="{{ $repo }}" data-branch="{{ $branch }}" data-bestand="{{ $.Params.bestand }}">
+            <h2>Gegevens invullen</h2>
+            <p>Voor dit werk is nog geen informatie. Vul de velden in en klik op
+              <em>Opslaan</em>: GitHub opent dan met het bestand
+              <code>images/{{ $.Params.bestand }}.yaml</code> klaar om op te slaan.</p>
+            <label>Titel <input name="titel" value="{{ $.Title }}" required /></label>
+            <label>Jaar <input name="jaar" inputmode="numeric" placeholder="bijv. 1987" /></label>
+            <label>Techniek <input name="techniek" placeholder="bijv. Gietwerk (verloren was)" /></label>
+            <label>Materiaal <input name="materiaal" placeholder="bijv. Brons" /></label>
+            <label>Afmetingen <input name="afmetingen" placeholder="bijv. 32 × 20 × 24 cm" /></label>
+            <label>Beschrijving <textarea name="beschrijving" rows="6"></textarea></label>
+            <button class="btn" type="submit">Opslaan</button>
+          </form>
+        {{ end }}
+      {{ end }}
     </div>
   </article>
 

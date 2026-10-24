@@ -75,3 +75,62 @@
     padding: 0 1rem;
   }
 }
+
+/* Invulformulier (beheermodus) */
+.werk-form {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border: 1px dashed var(--border);
+  border-radius: 0.5rem;
+}
+
+.werk-form[hidden],
+.werk-beheer[hidden] {
+  display: none;
+}
+
+.werk-form h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.werk-form p {
+  margin: 0;
+  color: var(--text-2);
+  font-size: 0.9rem;
+}
+
+.werk-form label {
+  display: grid;
+  gap: 0.35rem;
+  color: var(--text-2);
+  font-size: 0.9rem;
+}
+
+.werk-form input,
+.werk-form textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  background: var(--surface-1);
+  color: var(--text-1);
+  font: inherit;
+}
+
+.werk-form button {
+  justify-self: start;
+  padding: 0.6rem 1.5rem;
+  border: 0;
+  border-radius: 0.375rem;
+  background: var(--text-1);
+  color: var(--surface-1);
+  font: inherit;
+  cursor: pointer;
+}
+
+.werk-beheer {
+  margin-top: 1.5rem;
+}
