@@ -4,24 +4,34 @@
     {{ with .Params.Description }}<p>{{ . | markdownify }}</p>{{ end }}
   </hgroup>
 
-  {{/* Speelse, versprongen indeling: eerst het uitgelichte album, dan de categorieën */}}
+  {{/*
+    Galerijwand: eerst een uitgelichte tag (het grootste blok), dan de
+    categorieën. Welke tag wordt uitgelicht wisselt elke dag (assets/js/custom.js);
+    zonder JavaScript is het de eerste.
+  */}}
   <section class="home-grid">
-    {{ range first 1 (where site.Pages.ByDate.Reverse "Params.featured" true) }}
-      {{ with partial "get-gallery.html" . }}
-        {{ $page := .page }}
-        {{ $covers := where ($page.Resources.ByType "image") "Params.cover" true }}
-        {{ $image := index $covers 0 | default (index .images 0) }}
-        {{ $img := $image.Filter (slice images.AutoOrient (images.Process "fit 1400x1400")) }}
-        {{ $color := index $img.Colors 0 | default "transparent" }}
-        <a class="home-item home-featured" href="{{ $page.RelPermalink }}">
-          <figure style="background-color: {{ $color }}">
-            <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ $page.Title }}" />
-          </figure>
-          <div class="home-caption">
-            <h2>{{ $page.Title }}</h2>
-            <p>{{ T "photoCount" (.imageCount | lang.FormatNumber 0) }}</p>
-          </div>
-        </a>
+    {{ with site.GetPage "/tags" }}
+      {{ with .Pages.ByTitle }}
+        <div class="home-item home-featured" data-uitgelicht>
+          {{ range $i, $tag := . }}
+            {{ $werken := where $tag.Pages "Params.afbeelding" "!=" nil }}
+            {{ with index (sort $werken "Params.afbeelding") 0 }}
+              {{ with .Resources.GetMatch .Params.afbeelding }}
+                {{ $img := .Filter (slice images.AutoOrient (images.Process "fit 1400x1400")) }}
+                {{ $color := index $img.Colors 0 | default "transparent" }}
+                <a href="{{ $tag.RelPermalink }}"{{ if gt $i 0 }} hidden{{ end }}>
+                  <figure style="background-color: {{ $color }}">
+                    <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ $tag.Title }}" loading="lazy" />
+                  </figure>
+                  <div class="home-caption">
+                    <h2>{{ $tag.Title }}</h2>
+                    <p>{{ len $werken }} {{ cond (eq (len $werken) 1) "werk" "werken" }}</p>
+                  </div>
+                </a>
+              {{ end }}
+            {{ end }}
+          {{ end }}
+        </div>
       {{ end }}
     {{ end }}
 

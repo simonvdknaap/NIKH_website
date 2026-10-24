@@ -120,6 +120,17 @@ hgroup h1 {
   transition: transform 0.6s ease;
 }
 
+.home-featured > a {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.home-featured > a[hidden] {
+  display: none;
+}
+
 .home-item:hover img {
   transform: scale(1.03);
 }
@@ -160,10 +171,10 @@ hgroup h1 {
 
 /* Telefoon: twee kolommen */
 .home-featured { grid-column: span 2; grid-row: span 3; }
-.home-album:nth-of-type(4n + 2) { grid-row: span 5; }
-.home-album:nth-of-type(4n + 3) { grid-row: span 2; }
-.home-album:nth-of-type(4n) { grid-row: span 3; }
-.home-album:nth-of-type(4n + 1) { grid-column: span 2; grid-row: span 3; }
+.home-album:nth-child(4n + 2) { grid-row: span 5; }
+.home-album:nth-child(4n + 3) { grid-row: span 2; }
+.home-album:nth-child(4n) { grid-row: span 3; }
+.home-album:nth-child(4n + 1) { grid-column: span 2; grid-row: span 3; }
 
 /* Groter scherm: 12 kolommen; het patroon van vier albums herhaalt zich */
 @media (min-width: 900px) {
@@ -176,10 +187,10 @@ hgroup h1 {
   .home-item { grid-column: span 4; grid-row: span 4; }
 
   .home-featured { grid-column: span 7; grid-row: span 6; }
-  .home-album:nth-of-type(4n + 2) { grid-column: span 5; grid-row: span 6; }
-  .home-album:nth-of-type(4n + 3) { grid-column: span 4; grid-row: span 4; }
-  .home-album:nth-of-type(4n) { grid-column: span 3; grid-row: span 4; }
-  .home-album:nth-of-type(4n + 1) { grid-column: span 5; grid-row: span 4; }
+  .home-album:nth-child(4n + 2) { grid-column: span 5; grid-row: span 6; }
+  .home-album:nth-child(4n + 3) { grid-column: span 4; grid-row: span 4; }
+  .home-album:nth-child(4n) { grid-column: span 3; grid-row: span 4; }
+  .home-album:nth-child(4n + 1) { grid-column: span 5; grid-row: span 4; }
 }
 
 /* Pagina van één werk */
@@ -332,7 +343,7 @@ section.gallery {
   padding-left: 1.5rem;
 }
 
-/* Filteren op tag, techniek en materiaal (albumpagina's) */
+/* Filteren op tag, techniek en materiaal (album- en overzichtspagina's) */
 .tag-filter {
   display: grid;
   gap: 0.75rem;
@@ -341,17 +352,11 @@ section.gallery {
   padding: 0 1.5rem;
 }
 
-.tag-filter-groep {
+.tag-filter-knoppen {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
-}
-
-.tag-filter-label {
-  min-width: 6rem;
-  color: var(--text-2);
-  font-size: 0.875rem;
 }
 
 .tag-filter button {

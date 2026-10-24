@@ -1,0 +1,12 @@
+{{/*
+  Filterwaarden van één werkpagina, per groep als tekst met slugs
+  gescheiden door spaties. Gebruikt voor data-* op de foto's in een galerij.
+*/}}
+{{ $werk := . }}
+{{ $filters := dict "tags" "" "technieken" "" "materialen" "" }}
+{{ range $tax := slice "tags" "technieken" "materialen" }}
+  {{ $slugs := slice }}
+  {{ range $werk.GetTerms $tax }}{{ $slugs = $slugs | append (urlize (lower .LinkTitle)) }}{{ end }}
+  {{ $filters = merge $filters (dict $tax (delimit $slugs " ")) }}
+{{ end }}
+{{ return $filters }}
