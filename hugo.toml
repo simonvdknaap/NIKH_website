@@ -2,3 +2,12 @@ baseURL = 'https://simonvdknaap.github.io/NIKH_website/'
 languageCode = 'en-us'
 title = 'NIKH'
 theme = 'kaiser'
+
+# De map images/ in de hoofdmap wordt als assets/images ingeladen,
+# zodat content/_content.gotmpl de foto's over de albums kan verdelen.
+[[module.mounts]]
+  source = 'assets'
+  target = 'assets'
+[[module.mounts]]
+  source = 'images'
+  target = 'assets/images'
