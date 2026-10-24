@@ -78,34 +78,37 @@
         </p>
       {{ end }}
 
-      {{/* Invulformulier: alleen zichtbaar in beheermodus (?beheer=1), zie assets/js/custom.js */}}
-      {{ if and site.Params.formulier_email (not .Params.heeft_info) }}
-        <form class="werk-form werk-beheer" hidden
-          action="https://formsubmit.co/{{ site.Params.formulier_email }}" method="POST" enctype="multipart/form-data"
-          data-bestand="{{ .Params.bestand }}">
-          <h2>Gegevens invullen</h2>
-          <p>Voor dit werk is nog geen informatie. Vul de velden in en klik op
-            <em>Versturen</em>; de gegevens worden per e-mail verstuurd en daarna op de website gezet.</p>
-          {{/* Velden voor formsubmit.co; _next, Pagina, yaml en de bijlage worden door assets/js/custom.js gevuld */}}
-          <input type="hidden" name="_subject" value="NIKH website: gegevens voor {{ .Params.bestand }}" />
-          <input type="hidden" name="_template" value="box" />
-          <input type="hidden" name="_captcha" value="false" />
-          <input type="hidden" name="_next" />
-          <input type="hidden" name="Foto" value="{{ .Params.bestand }}" />
-          <input type="hidden" name="Pagina" />
-          <input type="hidden" name="yaml" />
-          <input type="file" name="attachment" hidden />
-          <input type="text" name="_honey" class="werk-form-honey" tabindex="-1" autocomplete="off" aria-hidden="true" />
-          <label>Titel <input name="titel" value="{{ .Title }}" required /></label>
-          <label>Jaar <input name="jaar" inputmode="numeric" placeholder="bijv. 1987" /></label>
-          <label>Techniek <input name="techniek" placeholder="bijv. Gietwerk (verloren was)" /></label>
-          <label>Materiaal <input name="materiaal" placeholder="bijv. Brons, Hout" /></label>
-          <label>Afmetingen <input name="afmetingen" placeholder="bijv. 32 × 20 × 24 cm" /></label>
-          <label class="werk-form-vinkje"><input type="checkbox" name="beschikbaar" value="ja" /> Beschikbaar (te koop)</label>
-          <label>Personen <input name="tags" placeholder="bijv. Cleo, Anneke (gescheiden door komma's)" /></label>
-          <label>Beschrijving <textarea name="beschrijving" rows="6"></textarea></label>
-          <button type="submit">Versturen</button>
-        </form>
+      {{/*
+        Beheer (alleen zichtbaar in beheermodus, ?beheer=1, zie assets/js/custom.js):
+        zonder .yaml-bestand een invulformulier; Opslaan opent GitHub met het
+        bestand images/<werk>.yaml al ingevuld, de kunstenaar klikt op Commit.
+        Met .yaml-bestand een knop om het op GitHub te bewerken.
+      */}}
+      {{ with site.Params.github_repo }}
+        {{ $repo := . }}
+        {{ $branch := site.Params.github_branch | default "main" }}
+        {{ if $.Params.heeft_info }}
+          <p class="werk-beheer" hidden>
+            <a class="btn" href="https://github.com/{{ $repo }}/edit/{{ $branch }}/images/{{ $.Params.bestand }}.yaml" target="_blank" rel="noopener">Gegevens bewerken op GitHub</a>
+          </p>
+        {{ else }}
+          <form class="werk-form werk-beheer" hidden
+            data-repo="{{ $repo }}" data-branch="{{ $branch }}" data-bestand="{{ $.Params.bestand }}">
+            <h2>Gegevens invullen</h2>
+            <p>Voor dit werk is nog geen informatie. Vul de velden in en klik op
+              <em>Opslaan</em>: GitHub opent dan met het bestand
+              <code>images/{{ $.Params.bestand }}.yaml</code> klaar om op te slaan.</p>
+            <label>Titel <input name="titel" value="{{ $.Title }}" required /></label>
+            <label>Jaar <input name="jaar" inputmode="numeric" placeholder="bijv. 1987" /></label>
+            <label>Techniek <input name="techniek" placeholder="bijv. Gietwerk (verloren was)" /></label>
+            <label>Materiaal <input name="materiaal" placeholder="bijv. Brons, Hout" /></label>
+            <label>Afmetingen <input name="afmetingen" placeholder="bijv. 32 × 20 × 24 cm" /></label>
+            <label class="werk-form-vinkje"><input type="checkbox" name="beschikbaar" value="ja" /> Beschikbaar (te koop)</label>
+            <label>Personen <input name="tags" placeholder="bijv. Cleo, Anneke (gescheiden door komma's)" /></label>
+            <label>Beschrijving <textarea name="beschrijving" rows="6"></textarea></label>
+            <button type="submit">Opslaan</button>
+          </form>
+        {{ end }}
       {{ end }}
     </div>
   </article>

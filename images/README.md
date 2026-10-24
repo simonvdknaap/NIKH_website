@@ -106,26 +106,26 @@ beschrijving: |
 - Zonder `.yaml`-bestand krijgt de foto ook een pagina, alleen met de titel
   en de categorie.
 
-## Invullen via de website (voor de kunstenaar)
+## Invullen via de website
 
-De gegevens kunnen ook op de website zelf worden ingevuld, zonder GitHub:
+Je kunt de gegevens ook op de website zelf invullen:
 
-1. Open de website één keer met `?beheer=1` achter het adres:
+1. Open de website één keer met `?beheer=1` achter het adres, bijvoorbeeld
    <https://simonvdknaap.github.io/NIKH_website/?beheer=1>. Deze browser
-   onthoudt dat (uitzetten: `?beheer=0`). Gewone bezoekers zien het
-   formulier niet.
+   onthoudt dat je in beheermodus bent (uitzetten: `?beheer=0`). Gewone
+   bezoekers zien het formulier niet.
 2. Open een werk zonder gegevens: naast de foto staat een formulier.
-3. Vul de velden in en klik op **Versturen**. De gegevens gaan per e-mail
-   naar het adres in `hugo.toml` (`formulier_email`).
+3. Vul de velden in en klik op **Opslaan**. GitHub opent met het
+   `.yaml`-bestand (met de naam van het werk) al ingevuld; klik daar op
+   **Commit changes**.
+4. Na een paar minuten staat de informatie op de website.
 
-De e-mail bevat alle velden en het kant-en-klare `.yaml`-bestand als
-**bijlage**, met de juiste naam (bijvoorbeeld `K_portret.yaml`). Zet die
-bijlage in de map `images/` en de website wordt vanzelf bijgewerkt. (De inhoud
-staat ook in het veld `yaml` in de e-mail, voor het geval de bijlage ontbreekt.)
+Bij een werk dat al gegevens heeft, staat in beheermodus een knop
+**Gegevens bewerken op GitHub**.
 
-Het versturen loopt via [FormSubmit](https://formsubmit.co). **De allereerste
-keer** stuurt FormSubmit een bevestigingsmail naar het ontvangstadres: klik
-daarin op *Activate Form*. Pas daarna komen de berichten binnen.
+Opslaan kan alleen met een GitHub-account dat schrijfrechten heeft op deze
+repository. Het formulier slaat op in de branch uit `hugo.toml`
+(`github_branch`, standaard `main`).
 
 De verdeling en de pagina's worden gemaakt in `content/_content.gotmpl`;
 de opmaak van de pagina staat in `layouts/_default/werk.html`.
