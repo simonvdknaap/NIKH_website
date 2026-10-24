@@ -9,20 +9,20 @@ html.light,
 html.dark {
   color-scheme: light;
 
-  --surface-1: #faf9f6;
-  --surface-2: #efede8;
+  --surface-1: #f4eac5;
+  --surface-2: #eadfb4;
   --text-1: #22201c;
-  --text-2: #7b766d;
-  --border: #dedad2;
+  --text-2: #786f58;
+  --border: #d9cc9c;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --surface-1: #faf9f6;
-    --surface-2: #efede8;
+    --surface-1: #f4eac5;
+    --surface-2: #eadfb4;
     --text-1: #22201c;
-    --text-2: #7b766d;
-    --border: #dedad2;
+    --text-2: #786f58;
+    --border: #d9cc9c;
   }
 }
 
