@@ -54,8 +54,16 @@ main h3 {
   font-variant-numeric: lining-nums;
 }
 
-main h1 {
+main h1,
+body > header .header-logo {
   font-family: "Cormorant Garamond", Georgia, serif;
+}
+
+/* Logo NIKH linksboven, in de serif */
+body > header .header-logo {
+  font-weight: 700;
+  font-size: 1.75rem;
+  letter-spacing: 0.04em;
 }
 
 hgroup h1 {
