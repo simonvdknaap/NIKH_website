@@ -411,57 +411,93 @@ section.gallery {
   text-underline-offset: 0.2em;
 }
 
-/* Menu: paneel aan de rechterkant, over de inhoud heen */
-body > menu {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 50;
-  display: block;
-  width: 20rem;
-  max-width: 85vw;
+/* Kop: logo links (altijd), menu-items en menuknop rechts */
+body > header {
+  gap: 1rem;
+}
+
+.header-links {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.header-rechts {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+  align-items: center;
+  min-width: 0;
+}
+
+/* Menu-items in de kop: geen blok eroverheen, de inhoud verspringt niet */
+#menu {
+  display: flex;
+  gap: 1.75rem;
   margin: 0;
-  padding: 5rem 2rem 2rem;
-  overflow-y: auto;
-  background: var(--surface-1);
-  border-left: 1px solid var(--border);
-  box-shadow: -1rem 0 2rem -1.5rem rgba(0, 0, 0, 0.25);
-  font-weight: 400;
-  text-align: left;
-  transform: translateX(100%);
+  padding: 0 0.75rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  list-style: none;
+  white-space: nowrap;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-weight: 300;
+  font-size: 1.5rem;
+  opacity: 0;
   visibility: hidden;
   transition:
-    transform 0.3s ease,
-    visibility 0s linear 0.3s;
+    opacity 0.25s ease,
+    visibility 0s linear 0.25s;
 }
 
-body > menu.hidden {
-  display: block;
-}
-
-body > menu.open {
-  transform: none;
+#menu.open {
+  opacity: 1;
   visibility: visible;
-  transition: transform 0.3s ease;
+  transition: opacity 0.25s ease;
 }
 
-body > menu .menu-sluiten {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  width: 3rem;
-  height: 3rem;
-  border: 0;
-  background: transparent;
+#menu a {
+  color: var(--text-2);
+}
+
+#menu a:hover,
+#menu a[aria-current="true"] {
   color: var(--text-1);
-  font-size: 1.25rem;
-  cursor: pointer;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body > menu,
-  body > menu.open {
+  #menu,
+  #menu.open {
     transition: none;
+  }
+}
+
+/* Werk-pagina: groepen onder elkaar */
+.werk-groep {
+  max-width: 1280px;
+}
+
+.werk-groep > h2 {
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+.werk-groep > .galleries {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 2rem 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .werk-groep > .galleries {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .werk-groep > .galleries {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }

@@ -1,0 +1,18 @@
+# Nederlandse teksten voor het thema (de site staat op languageCode en-us)
+menu: Menu
+home: Home
+pageNotFound: Pagina niet gevonden
+toHomepage: Naar de startpagina
+closeTitle: Sluiten
+zoomTitle: Zoomen
+arrowPrevTitle: Vorige
+arrowNextTitle: Volgende
+errorMsg: De foto kan niet worden geladen
+downloadTitle: Downloaden
+relatedAlbums: Gerelateerde albums
+photoCount:
+  one: 1 werk
+  other: "{{ . }} werken"
+albumCount:
+  one: "{{ .photoCount }} in {{ .count }} album"
+  other: "{{ .photoCount }} in {{ .count }} albums"

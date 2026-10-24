@@ -1,19 +1,23 @@
 <header>
-  {{/* Terug-pijl: naar de bovenliggende pagina; vanaf een tag, techniek of materiaal naar Werk */}}
-  {{ $terug := .Parent }}
-  {{ if eq .Kind "term" }}{{ with site.GetPage "/werk" }}{{ $terug = . }}{{ end }}{{ end }}
-  {{ with $terug }}
-    <a class="btn btn-square" href="{{ .RelPermalink | default .Site.Home.RelPermalink }}" title="{{ .Title }}">
-      <svg width="24" height="24" data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path clip-rule="evenodd" fill-rule="evenodd" d="M11.03 3.97a.75.75 0 0 1 0 1.06l-6.22 6.22H21a.75.75 0 0 1 0 1.5H4.81l6.22 6.22a.75.75 0 1 1-1.06 1.06l-7.5-7.5a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 0 1 1.06 0Z"></path>
-      </svg>
-    </a>
-  {{ else }}
-    <a class="btn" href="{{ .Site.Home.RelPermalink }}">
-      {{ .Site.Title }}
-    </a>
-  {{ end }}
+  {{/* Links: altijd het logo (naar de startpagina), plus een terug-pijl op diepere pagina's */}}
+  <div class="header-links">
+    <a class="btn header-logo" href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a>
+    {{ $terug := .Parent }}
+    {{ if eq .Kind "term" }}{{ with site.GetPage "/werk" }}{{ $terug = . }}{{ end }}{{ end }}
+    {{ with $terug }}
+      {{ if not .IsHome }}
+        <a class="btn btn-square" href="{{ .RelPermalink | default site.Home.RelPermalink }}" title="{{ .Title }}">
+          <svg width="24" height="24" data-slot="icon" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path clip-rule="evenodd" fill-rule="evenodd" d="M11.03 3.97a.75.75 0 0 1 0 1.06l-6.22 6.22H21a.75.75 0 0 1 0 1.5H4.81l6.22 6.22a.75.75 0 1 1-1.06 1.06l-7.5-7.5a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 0 1 1.06 0Z"></path>
+          </svg>
+        </a>
+      {{ end }}
+    {{ end }}
+  </div>
   {{ if site.Menus.main }}
+    {{/* Rechts: de menu-items (in de kop zelf, verschijnen bij openen) en de menuknop */}}
+    <div class="header-rechts">
+    {{ partial "menu.html" . }}
     <ul>
       <li>
         <button class="btn btn-square" id="menu-toggle" aria-expanded="false" type="button" title="{{ T "menu" }}">
@@ -26,6 +30,6 @@
         </button>
       </li>
     </ul>
+    </div>
   {{ end }}
 </header>
-{{ partial "menu.html" . }}
