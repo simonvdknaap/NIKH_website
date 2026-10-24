@@ -80,9 +80,10 @@ document.querySelectorAll(".werk-fotos").forEach((fotos) => {
 });
 
 /*
- * Categoriepagina: "Terug naar home" als je van de startpagina kwam, anders
- * "Terug naar Werk". Bij terugkomen van een werk geldt de eerdere keuze
- * (onthouden voor dit bezoek).
+ * Categorie-, persoon-, techniek- en materiaalpagina's (o.a. via het
+ * uitgelichte blok op de startpagina): "Terug naar Home" als je van de
+ * startpagina kwam, anders "Terug naar Werk". Bij terugkomen van een werk
+ * geldt de eerdere keuze (onthouden voor dit bezoek).
  */
 const terug = document.querySelector(".header-terug[data-home]");
 
@@ -104,7 +105,7 @@ if (terug) {
   }
   if (herkomst === "home") {
     terug.href = home.href;
-    terug.lastChild.textContent = " Terug naar home";
+    terug.lastChild.textContent = " Terug naar Home";
   }
 }
 
