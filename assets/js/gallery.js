@@ -1,23 +1,26 @@
 import justifiedLayout from "./justified-layout.js";
 import * as params from "@params";
 
-const gallery = document.getElementById("gallery");
-
-if (gallery) {
+/*
+ * Rijen foto's in hun eigen verhouding (justified layout): de foto's in een
+ * rij krijgen dezelfde hoogte en vullen samen de breedte. Gebruikt voor de
+ * fotogalerij van albums (#gallery) en voor de Werk-pagina (.werk-rijen).
+ */
+function deelIn(container, { itemSelector, rowHeight, spacing, imgHeight, onLayout }) {
   let containerWidth = 0;
-  const items = gallery.querySelectorAll(".gallery-item");
+  const items = container.querySelectorAll(itemSelector);
 
   const aspectRatios = Array.from(items).map((item) => {
     const img = item.querySelector("img");
     img.style.width = "100%";
-    img.style.height = "auto";
+    img.style.height = imgHeight;
     return parseFloat(img.getAttribute("width")) / parseFloat(img.getAttribute("height"));
   });
 
   // force: opnieuw indelen, ook als de breedte gelijk is (bijv. na filteren op tag)
-  function updateGallery(force) {
-    if (force !== true && containerWidth === gallery.getBoundingClientRect().width) return;
-    containerWidth = gallery.getBoundingClientRect().width;
+  function update(force) {
+    if (force !== true && containerWidth === container.getBoundingClientRect().width) return;
+    containerWidth = container.getBoundingClientRect().width;
 
     // Alleen zichtbare foto's indelen; verborgen foto's (filter) overslaan
     const visible = Array.from(items).map((item, i) => [item, aspectRatios[i]]).filter(([item]) => !item.hidden);
@@ -26,8 +29,8 @@ if (gallery) {
       visible.map(([, ratio]) => ratio),
       {
         rowWidth: containerWidth,
-        spacing: Number.isInteger(params.boxSpacing) ? params.boxSpacing : 8,
-        rowHeight: params.targetRowHeight || 288,
+        spacing: spacing(),
+        rowHeight: rowHeight(),
         heightTolerance: Number.isInteger(params.targetRowHeightTolerance) ? params.targetRowHeightTolerance : 0.25,
       },
     );
@@ -42,16 +45,41 @@ if (gallery) {
       item.style.overflow = "hidden";
     });
 
-    gallery.style.position = "relative";
-    gallery.style.height = layout.containerHeight + "px";
-    gallery.style.visibility = "";
+    container.style.position = "relative";
+    container.style.height = layout.containerHeight + "px";
+    container.style.visibility = "";
+    if (onLayout) onLayout();
   }
 
-  window.addEventListener("gallery:update", () => updateGallery(true));
-  window.addEventListener("resize", updateGallery);
-  window.addEventListener("orientationchange", updateGallery);
+  window.addEventListener("gallery:update", () => update(true));
+  window.addEventListener("resize", update);
+  window.addEventListener("orientationchange", update);
 
   // Call twice to adjust for scrollbars appearing after first call
-  updateGallery();
-  updateGallery();
+  update();
+  update();
 }
+
+const gallery = document.getElementById("gallery");
+
+if (gallery) {
+  deelIn(gallery, {
+    itemSelector: ".gallery-item",
+    rowHeight: () => params.targetRowHeight || 288,
+    spacing: () => (Number.isInteger(params.boxSpacing) ? params.boxSpacing : 8),
+    imgHeight: "auto",
+  });
+}
+
+// Werk-pagina: op groot scherm grotere rijen dan in de albums, op de telefoon klein
+const groot = window.matchMedia("(min-width: 900px)");
+
+document.querySelectorAll(".werk-rijen").forEach((container) => {
+  deelIn(container, {
+    itemSelector: ".werk-tegel",
+    rowHeight: () => (groot.matches ? 320 : 144),
+    spacing: () => (groot.matches ? 12 : 8),
+    imgHeight: "100%",
+    onLayout: () => container.classList.add("ingedeeld"),
+  });
+});
