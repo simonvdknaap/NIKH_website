@@ -1,0 +1,8 @@
+{{ define "main" }}
+  <section class="intro">
+    <h1>{{ .Title }}</h1>
+    {{ with .Description }}<p>{{ . }}</p>{{ end }}
+    {{ .Content }}
+  </section>
+  {{ partial "gallery.html" . }}
+{{ end }}
