@@ -1,6 +1,6 @@
 {{/*
   Werk: alles op één pagina, per groep: categorieën, personen (tags),
-  technieken en materialen, elk als mozaïek zoals op de startpagina.
+  technieken en materialen, elk als rijen foto's in hun eigen verhouding.
 */}}
 {{ define "main" }}
   {{ partial "title.html" . }}
@@ -9,7 +9,7 @@
   {{ with where site.Home.Pages "Params.private" "ne" true }}
     <section class="werk-groep">
       <h2>Categorieën</h2>
-      <div class="home-grid werk-mozaiek">
+      <div class="werk-rijen">
         {{ range . }}
           {{ with partial "get-gallery.html" . }}
             {{ $covers := where (.page.Resources.ByType "image") "Params.cover" true }}
@@ -28,7 +28,7 @@
       {{ with .Pages.ByTitle }}
         <section class="werk-groep">
           <h2>{{ $titel }}</h2>
-          <div class="home-grid werk-mozaiek">
+          <div class="werk-rijen">
             {{ range . }}
               {{ $term := . }}
               {{ $werken := where .Pages "Params.afbeelding" "!=" nil }}

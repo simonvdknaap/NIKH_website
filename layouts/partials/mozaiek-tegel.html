@@ -1,13 +1,14 @@
 {{/*
-  Eén tegel in een mozaïek (zoals op de startpagina): foto met de naam en het
-  aantal werken als label linksonder.
+  Eén tegel op de Werk-pagina: de foto in zijn eigen verhouding (niet
+  bijgesneden), met de naam en het aantal werken als label linksonder.
   Context: dict "pagina" (waar de tegel naartoe linkt), "afbeelding" (resource)
   en "aantal" (aantal werken).
 */}}
 {{ with .afbeelding }}
-  {{ $img := .Filter (slice images.AutoOrient (images.Process "fit 1000x1000")) }}
+  {{ $img := .Filter (slice images.AutoOrient (images.Process "fit 900x900")) }}
   {{ $color := index $img.Colors 0 | default "transparent" }}
-  <a class="home-item" href="{{ $.pagina.RelPermalink }}">
+  {{ $r := div (float $img.Width) $img.Height }}
+  <a class="werk-tegel" href="{{ $.pagina.RelPermalink }}" style="--r: {{ printf "%.4f" $r }}">
     <figure style="background-color: {{ $color }}">
       <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ $.pagina.Title }}" loading="lazy" />
     </figure>
