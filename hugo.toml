@@ -3,6 +3,8 @@ languageCode = 'en-us'
 title = 'NIKH'
 # Titels van tags, technieken en materialen: alleen de eerste letter als hoofdletter
 titleCaseStyle = 'firstupper'
+# Het verkleinen van veel grote foto's kan bij de eerste build lang duren
+timeout = '300s'
 theme = 'kaiser'
 
 # De map images/ in de hoofdmap wordt als assets/images ingeladen,
@@ -15,9 +17,10 @@ theme = 'kaiser'
   target = 'assets/images'
 
 [params]
-  # Het invulformulier op de werkpagina's stuurt de gegevens naar dit adres
-  # (via formsubmit.co, zie assets/js/custom.js)
-  formulier_email = '4.tannest.coconut@icloud.com'
+  # Repository waar het invulformulier op de werkpagina's de .yaml-bestanden
+  # opslaat (via GitHub, zie assets/js/custom.js)
+  github_repo = 'simonvdknaap/NIKH_website'
+  github_branch = 'main'
 
 
 # Filters op de albumpagina's; elke waarde krijgt een eigen overzichtspagina

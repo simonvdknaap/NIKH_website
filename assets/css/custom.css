@@ -414,16 +414,7 @@ main .home-caption h2 {
   cursor: default;
 }
 
-.werk-form-verstuurd {
-  margin-top: 2rem;
-  padding: 1.5rem;
-  border: 1px solid var(--border);
-}
 
-.werk-form-honey {
-  position: absolute;
-  left: -9999px;
-}
 
 /* Albumpagina's: zelfde maximale breedte als de startpagina */
 section.gallery {
@@ -775,4 +766,9 @@ main .werk-tegel .home-caption h2 {
 
 .werk-form .werk-form-vinkje input {
   width: auto;
+}
+
+/* Knop "Gegevens bewerken op GitHub" (beheermodus) */
+p.werk-beheer {
+  margin-top: 1.5rem;
 }

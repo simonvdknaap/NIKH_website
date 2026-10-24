@@ -160,41 +160,18 @@ function maakYaml(form) {
 if (beheerModus()) {
   document.querySelectorAll(".werk-beheer").forEach((el) => (el.hidden = false));
 
-  /* Terug van formsubmit.co na het versturen (?verstuurd=1) */
-  if (new URLSearchParams(window.location.search).get("verstuurd") === "1") {
-    document.querySelectorAll(".werk-form").forEach((form) => {
-      const melding = document.createElement("p");
-      melding.className = "werk-form-verstuurd";
-      melding.textContent = "Verstuurd, dank je wel! De gegevens komen binnenkort op de website.";
-      form.replaceWith(melding);
-    });
-  }
-
   /*
-   * Bij Versturen: maak het .yaml-bestand, voeg het toe als bijlage en verstuur
-   * het formulier naar formsubmit.co, dat alles naar het e-mailadres stuurt.
+   * Bij Opslaan: maak het .yaml-bestand en open GitHub's "nieuw bestand"-pagina
+   * met de naam en inhoud al ingevuld; daar klik je op "Commit changes".
    */
   document.querySelectorAll(".werk-form").forEach((form) => {
     form.addEventListener("submit", (event) => {
       event.preventDefault();
-      const { bestand } = form.dataset;
-      const yaml = maakYaml(form);
-      const pagina = window.location.origin + window.location.pathname;
-
-      form.elements.yaml.value = yaml;
-      form.elements.Pagina.value = pagina;
-      form.elements._next.value = `${pagina}?verstuurd=1`;
-      try {
-        const bijlage = new DataTransfer();
-        bijlage.items.add(new File([yaml], `${bestand}.yaml`, { type: "text/plain" }));
-        form.elements.attachment.files = bijlage.files;
-      } catch (error) {
-        // Oude browser: geen bijlage, de inhoud staat dan alleen in het veld "yaml".
-        console.error(error);
-      }
-
-      form.querySelector("button").disabled = true;
-      form.submit();
+      const { repo, branch, bestand } = form.dataset;
+      const url = new URL(`https://github.com/${repo}/new/${branch}/images`);
+      url.searchParams.set("filename", `${bestand}.yaml`);
+      url.searchParams.set("value", maakYaml(form));
+      window.open(url, "_blank", "noopener");
     });
   });
 }
