@@ -131,6 +131,20 @@
   cursor: pointer;
 }
 
-.werk-beheer {
-  margin-top: 1.5rem;
+.werk-form button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.werk-form .werk-form-status {
+  color: var(--text-1);
+}
+
+.werk-form .werk-form-status.fout {
+  color: #c0392b;
+}
+
+.werk-form-honey {
+  position: absolute;
+  left: -9999px;
 }

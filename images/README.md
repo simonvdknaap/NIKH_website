@@ -55,23 +55,26 @@ beschrijving: |
 - Zonder `.yaml`-bestand krijgt de foto ook een pagina, alleen met de titel
   en de categorie.
 
-## Invullen via de website
+## Invullen via de website (voor de kunstenaar)
 
-Je kunt de gegevens ook op de website zelf invullen:
+De gegevens kunnen ook op de website zelf worden ingevuld, zonder GitHub:
 
-1. Open de website één keer met `?beheer=1` achter het adres, bijvoorbeeld
+1. Open de website één keer met `?beheer=1` achter het adres:
    <https://simonvdknaap.github.io/NIKH_website/?beheer=1>. Deze browser
-   onthoudt dat je in beheermodus bent (uitzetten: `?beheer=0`).
-2. Open een werk zonder gegevens: onder de foto staat nu een formulier.
-3. Vul de velden in en klik op **Opslaan**. GitHub opent met het
-   `.yaml`-bestand al ingevuld; klik daar op **Commit changes**.
-4. Na een paar minuten staat de informatie op de website.
+   onthoudt dat (uitzetten: `?beheer=0`). Gewone bezoekers zien het
+   formulier niet.
+2. Open een werk zonder gegevens: naast de foto staat een formulier.
+3. Vul de velden in en klik op **Versturen**. De gegevens gaan per e-mail
+   naar het adres in `hugo.toml` (`formulier_email`).
 
-Bij een werk dat al gegevens heeft, staat in beheermodus een knop
-**Gegevens bewerken op GitHub**.
+De e-mail bevat alle velden én de kant-en-klare inhoud voor het
+`.yaml`-bestand. Maak in `images/` een bestand met de naam uit de e-mail
+(bijvoorbeeld `K_portret.yaml`), plak die inhoud erin en sla het op; de
+website wordt dan vanzelf bijgewerkt.
 
-Opslaan kan alleen met een GitHub-account dat schrijfrechten heeft op deze
-repository. Gewone bezoekers zien het formulier niet.
+Het versturen loopt via [FormSubmit](https://formsubmit.co). **De allereerste
+keer** stuurt FormSubmit een bevestigingsmail naar het ontvangstadres: klik
+daarin op *Activate Form*. Pas daarna komen de berichten binnen.
 
 De verdeling en de pagina's worden gemaakt in `content/_content.gotmpl`;
 de opmaak van de pagina staat in `layouts/_default/werk.html`.
