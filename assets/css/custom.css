@@ -578,11 +578,24 @@ body > header {
   width: 100%;
   height: 100%;
   margin: 0;
+  overflow: hidden;
   aspect-ratio: var(--r);
 }
 
 .werk-rijen.ingedeeld .werk-tegel figure {
   aspect-ratio: auto;
+}
+
+/* Labels onder de foto (kleinere schermen, als een naam over twee regels loopt) */
+.werk-rijen.labels-onder .home-caption {
+  position: static;
+  display: block;
+  padding: 0.35rem 0 0.25rem;
+  background: none;
+}
+
+.werk-rijen.labels-onder .home-caption p {
+  display: block;
 }
 
 .werk-tegel img {
