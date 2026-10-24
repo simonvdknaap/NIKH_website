@@ -1,6 +1,8 @@
 baseURL = 'https://simonvdknaap.github.io/NIKH_website/'
 languageCode = 'en-us'
 title = 'NIKH'
+# Titels van tags, technieken en materialen: alleen de eerste letter als hoofdletter
+titleCaseStyle = 'firstupper'
 theme = 'kaiser'
 
 # De map images/ in de hoofdmap wordt als assets/images ingeladen,
@@ -21,3 +23,20 @@ theme = 'kaiser'
   name = 'Tags'
   pageRef = '/tags'
   weight = 80
+
+# Filters op de albumpagina's; elke waarde krijgt een eigen overzichtspagina
+[taxonomies]
+  category = 'categories'
+  tag = 'tags'
+  techniek = 'technieken'
+  materiaal = 'materialen'
+
+[[menus.main]]
+  name = 'Technieken'
+  pageRef = '/technieken'
+  weight = 81
+
+[[menus.main]]
+  name = 'Materialen'
+  pageRef = '/materialen'
+  weight = 82

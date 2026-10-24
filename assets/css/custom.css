@@ -332,15 +332,26 @@ section.gallery {
   padding-left: 1.5rem;
 }
 
-/* Filteren op tag (albumpagina's) */
+/* Filteren op tag, techniek en materiaal (albumpagina's) */
 .tag-filter {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 1280px;
+  margin: -1.5rem auto 2rem;
+  padding: 0 1.5rem;
+}
+
+.tag-filter-groep {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.5rem;
-  max-width: 1280px;
-  margin: -1.5rem auto 2rem;
-  padding: 0 1.5rem;
+}
+
+.tag-filter-label {
+  min-width: 6rem;
+  color: var(--text-2);
+  font-size: 0.875rem;
 }
 
 .tag-filter button {
@@ -369,10 +380,14 @@ section.gallery {
 }
 
 .tag-filter-link {
-  margin-left: auto;
+  justify-self: start;
   font-size: 0.9375rem;
   text-decoration: underline;
   text-underline-offset: 0.25em;
+}
+
+.tag-filter-leeg {
+  color: var(--text-2);
 }
 
 .gallery-item[hidden] {

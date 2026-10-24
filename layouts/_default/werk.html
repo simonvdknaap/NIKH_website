@@ -17,17 +17,23 @@
           <dt>Categorie</dt>
           <dd><a href="{{ .RelPermalink }}">{{ .Title }}</a></dd>
         {{ end }}
-        {{ range slice
-          (slice "Jaar" .Params.jaar)
-          (slice "Techniek" .Params.techniek)
-          (slice "Materiaal" .Params.materiaal)
-          (slice "Afmetingen" .Params.afmetingen)
-        }}
+        {{ with .Params.jaar }}
+          <dt>Jaar</dt>
+          <dd>{{ . }}</dd>
+        {{ end }}
+        {{/* Techniek, materiaal en tags linken naar hun overzichtspagina */}}
+        {{ range slice (slice "Techniek" "technieken") (slice "Materiaal" "materialen") }}
           {{ $label := index . 0 }}
-          {{ with index . 1 }}
+          {{ with $.GetTerms (index . 1) }}
             <dt>{{ $label }}</dt>
-            <dd>{{ . }}</dd>
+            <dd class="werk-tags">
+              {{ range . }}<a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ end }}
+            </dd>
           {{ end }}
+        {{ end }}
+        {{ with .Params.afmetingen }}
+          <dt>Afmetingen</dt>
+          <dd>{{ . }}</dd>
         {{ end }}
         {{ with .GetTerms "tags" }}
           <dt>Tags</dt>
@@ -61,7 +67,7 @@
           <label>Titel <input name="titel" value="{{ .Title }}" required /></label>
           <label>Jaar <input name="jaar" inputmode="numeric" placeholder="bijv. 1987" /></label>
           <label>Techniek <input name="techniek" placeholder="bijv. Gietwerk (verloren was)" /></label>
-          <label>Materiaal <input name="materiaal" placeholder="bijv. Brons" /></label>
+          <label>Materiaal <input name="materiaal" placeholder="bijv. Brons, Hardsteen" /></label>
           <label>Afmetingen <input name="afmetingen" placeholder="bijv. 32 × 20 × 24 cm" /></label>
           <label>Tags <input name="tags" placeholder="bijv. Moniek, Anneke (gescheiden door komma's)" /></label>
           <label>Beschrijving <textarea name="beschrijving" rows="6"></textarea></label>

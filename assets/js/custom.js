@@ -1,39 +1,70 @@
 /* custom.js */
 
 /*
- * Filteren op tag op de albumpagina's. De knoppen staan in
- * layouts/partials/tag-filter.html, de foto's hebben data-tags.
- * De gekozen tag komt in het adres (?tag=moniek), zodat je ernaar kunt linken.
+ * Filteren op de albumpagina's, per groep: tags, technieken, materialen.
+ * De knoppen staan in layouts/partials/tag-filter.html; de foto's hebben
+ * data-tags, data-technieken en data-materialen. Filters uit verschillende
+ * groepen worden gecombineerd. De keuze komt in het adres
+ * (?tags=moniek&materialen=brons), zodat je ernaar kunt linken.
  */
 const tagFilter = document.querySelector(".tag-filter");
 
 if (tagFilter) {
-  const buttons = tagFilter.querySelectorAll("button");
+  const groepen = tagFilter.querySelectorAll(".tag-filter-groep");
   const link = tagFilter.querySelector(".tag-filter-link");
+  const leeg = tagFilter.querySelector(".tag-filter-leeg");
   const items = document.querySelectorAll("#gallery .gallery-item");
+  const keuze = {};
 
-  const kiesTag = (tag) => {
-    const button = Array.from(buttons).find((b) => b.dataset.tag === tag) || buttons[0];
-    tag = button.dataset.tag;
-    buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
+  const pasToe = (laatste) => {
     items.forEach((item) => {
-      item.hidden = tag !== "" && !(item.dataset.tags || "").split(" ").includes(tag);
+      item.hidden = Object.entries(keuze).some(
+        ([groep, tag]) => tag && !(item.dataset[groep] || "").split(" ").includes(tag),
+      );
     });
-    link.hidden = !tag || !button.dataset.href;
+    leeg.hidden = Array.from(items).some((item) => !item.hidden);
+
+    // Link naar de overzichtspagina van de laatst gekozen waarde
+    link.hidden = !laatste || !laatste.dataset.tag || !laatste.dataset.href;
     if (!link.hidden) {
-      link.href = button.dataset.href;
-      link.textContent = `Alle werken met ${button.firstChild.textContent.trim()} →`;
+      link.href = laatste.dataset.href;
+      link.textContent = `Alle werken met ${laatste.firstChild.textContent.trim()} →`;
     }
+
     const url = new URL(window.location.href);
-    if (tag) url.searchParams.set("tag", tag);
-    else url.searchParams.delete("tag");
+    url.searchParams.delete("tag");
+    for (const [groep, tag] of Object.entries(keuze)) {
+      if (tag) url.searchParams.set(groep, tag);
+      else url.searchParams.delete(groep);
+    }
     history.replaceState(null, "", url);
     window.dispatchEvent(new Event("gallery:update"));
   };
 
-  buttons.forEach((button) => button.addEventListener("click", () => kiesTag(button.dataset.tag)));
-  const start = new URLSearchParams(window.location.search).get("tag");
-  if (start) window.addEventListener("load", () => kiesTag(start));
+  const kies = (groepEl, tag) => {
+    const buttons = Array.from(groepEl.querySelectorAll("button"));
+    const button = buttons.find((b) => b.dataset.tag === tag) || buttons[0];
+    buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
+    keuze[groepEl.dataset.groep] = button.dataset.tag;
+    return button;
+  };
+
+  groepen.forEach((groepEl) => {
+    keuze[groepEl.dataset.groep] = "";
+    groepEl.querySelectorAll("button").forEach((button) =>
+      button.addEventListener("click", () => pasToe(kies(groepEl, button.dataset.tag))),
+    );
+  });
+
+  // Filters uit het adres overnemen (?tag= is de oude naam voor ?tags=)
+  const params = new URLSearchParams(window.location.search);
+  let laatste = null;
+  groepen.forEach((groepEl) => {
+    const groep = groepEl.dataset.groep;
+    const tag = params.get(groep) || (groep === "tags" ? params.get("tag") : null);
+    if (tag) laatste = kies(groepEl, tag);
+  });
+  if (laatste) window.addEventListener("load", () => pasToe(laatste));
 }
 
 /*
@@ -64,7 +95,11 @@ function maakYaml(form) {
   const regels = [];
   for (const veld of ["titel", "jaar", "techniek", "materiaal", "afmetingen"]) {
     const value = (data.get(veld) || "").trim();
-    if (value) regels.push(`${veld}: ${yamlWaarde(value)}`);
+    if (!value) continue;
+    // Meerdere materialen, gescheiden door komma's, worden een lijst
+    const materialen = value.split(",").map((m) => m.trim()).filter(Boolean);
+    if (veld === "materiaal" && materialen.length > 1) regels.push(`${veld}: ${JSON.stringify(materialen)}`);
+    else regels.push(`${veld}: ${yamlWaarde(value)}`);
   }
   const tags = (data.get("tags") || "")
     .split(",")
