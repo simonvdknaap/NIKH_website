@@ -9,6 +9,7 @@ in welk album de foto op de website komt:
 | `P`           | Penningen |
 | `B`           | Buste     |
 | `L`           | Lichamen  |
+| `H`           | Handen    |
 
 Hoofd- of kleine letter maakt niet uit. Voorbeelden:
 
@@ -17,6 +18,7 @@ K_portret-oude-man.jpg   -> Koppen
 P_penning-1987.jpg       -> Penningen
 B-brons-vrouw.jpg        -> Buste
 l_staande-figuur.jpg     -> Lichamen
+H_gevouwen-handen.jpg    -> Handen
 ```
 
 - Foto's met een andere eerste letter worden overgeslagen; de build geeft
