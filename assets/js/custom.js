@@ -38,17 +38,58 @@ function maakYaml(form) {
   return regels.join("\n") + "\n";
 }
 
+function zetStatus(form, tekst, isFout = false) {
+  const status = form.querySelector(".werk-form-status");
+  status.textContent = tekst;
+  status.classList.toggle("fout", isFout);
+}
+
 if (beheerModus()) {
   document.querySelectorAll(".werk-beheer").forEach((el) => (el.hidden = false));
 
   document.querySelectorAll(".werk-form").forEach((form) => {
-    form.addEventListener("submit", (event) => {
+    form.addEventListener("submit", async (event) => {
       event.preventDefault();
-      const { repo, branch, bestand } = form.dataset;
-      const url = new URL(`https://github.com/${repo}/new/${branch}/images`);
-      url.searchParams.set("filename", `${bestand}.yaml`);
-      url.searchParams.set("value", maakYaml(form));
-      window.open(url, "_blank", "noopener");
+      const { email, bestand } = form.dataset;
+      const data = new FormData(form);
+      const veld = (naam) => (data.get(naam) || "").trim();
+      const button = form.querySelector("button");
+
+      const bericht = {
+        _subject: `NIKH website: gegevens voor ${bestand}`,
+        _template: "box",
+        _captcha: "false",
+        _honey: veld("_honey"),
+        Foto: bestand,
+        Pagina: window.location.origin + window.location.pathname,
+        Titel: veld("titel"),
+        Jaar: veld("jaar"),
+        Techniek: veld("techniek"),
+        Materiaal: veld("materiaal"),
+        Afmetingen: veld("afmetingen"),
+        Beschrijving: veld("beschrijving"),
+        [`Inhoud voor images/${bestand}.yaml`]: maakYaml(form),
+      };
+
+      button.disabled = true;
+      zetStatus(form, "Bezig met versturen…");
+      try {
+        const response = await fetch(`https://formsubmit.co/ajax/${email}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify(bericht),
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || String(result.success) !== "true") {
+          throw new Error(result.message || `HTTP ${response.status}`);
+        }
+        zetStatus(form, "Verstuurd, dank je wel! De gegevens komen binnenkort op de website.");
+        form.querySelectorAll("input, textarea").forEach((el) => (el.disabled = true));
+      } catch (error) {
+        console.error(error);
+        zetStatus(form, "Versturen is niet gelukt. Probeer het later nog eens.", true);
+        button.disabled = false;
+      }
     });
   });
 }

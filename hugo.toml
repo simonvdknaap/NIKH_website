@@ -12,7 +12,7 @@ theme = 'kaiser'
   source = 'images'
   target = 'assets/images'
 
-# Repository waar het invulformulier op de werkpagina's de .yaml-bestanden opslaat
 [params]
-  github_repo = 'simonvdknaap/NIKH_website'
-  github_branch = 'main'
+  # Het invulformulier op de werkpagina's stuurt de gegevens naar dit adres
+  # (via formsubmit.co, zie assets/js/custom.js)
+  formulier_email = '4.tannest.coconut@icloud.com'
