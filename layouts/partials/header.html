@@ -3,7 +3,8 @@
   <div class="header-links">
     <a class="btn header-logo" href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a>
     {{ $terug := .Parent }}
-    {{ if eq .Kind "term" }}{{ with site.GetPage "/werk" }}{{ $terug = . }}{{ end }}{{ end }}
+    {{/* Categorieën (albums) en tag-, techniek- en materiaalpagina's vallen onder Werk */}}
+    {{ if or (eq .Kind "term") (eq .Layout "album") }}{{ with site.GetPage "/werk" }}{{ $terug = . }}{{ end }}{{ end }}
     {{ with $terug }}
       {{ if not .IsHome }}
         {{/* "Terug naar ..." met de naam van de bovenliggende pagina */}}
