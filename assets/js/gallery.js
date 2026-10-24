@@ -14,18 +14,25 @@ if (gallery) {
     return parseFloat(img.getAttribute("width")) / parseFloat(img.getAttribute("height"));
   });
 
-  function updateGallery() {
-    if (containerWidth === gallery.getBoundingClientRect().width) return;
+  // force: opnieuw indelen, ook als de breedte gelijk is (bijv. na filteren op tag)
+  function updateGallery(force) {
+    if (force !== true && containerWidth === gallery.getBoundingClientRect().width) return;
     containerWidth = gallery.getBoundingClientRect().width;
 
-    const layout = justifiedLayout(aspectRatios, {
-      rowWidth: containerWidth,
-      spacing: Number.isInteger(params.boxSpacing) ? params.boxSpacing : 8,
-      rowHeight: params.targetRowHeight || 288,
-      heightTolerance: Number.isInteger(params.targetRowHeightTolerance) ? params.targetRowHeightTolerance : 0.25,
-    });
+    // Alleen zichtbare foto's indelen; verborgen foto's (filter) overslaan
+    const visible = Array.from(items).map((item, i) => [item, aspectRatios[i]]).filter(([item]) => !item.hidden);
 
-    items.forEach((item, i) => {
+    const layout = justifiedLayout(
+      visible.map(([, ratio]) => ratio),
+      {
+        rowWidth: containerWidth,
+        spacing: Number.isInteger(params.boxSpacing) ? params.boxSpacing : 8,
+        rowHeight: params.targetRowHeight || 288,
+        heightTolerance: Number.isInteger(params.targetRowHeightTolerance) ? params.targetRowHeightTolerance : 0.25,
+      },
+    );
+
+    visible.forEach(([item], i) => {
       const { width, height, top, left } = layout.boxes[i];
       item.style.position = "absolute";
       item.style.width = width + "px";
@@ -40,6 +47,7 @@ if (gallery) {
     gallery.style.visibility = "";
   }
 
+  window.addEventListener("gallery:update", () => updateGallery(true));
   window.addEventListener("resize", updateGallery);
   window.addEventListener("orientationchange", updateGallery);
 

@@ -29,6 +29,12 @@
             <dd>{{ . }}</dd>
           {{ end }}
         {{ end }}
+        {{ with .GetTerms "tags" }}
+          <dt>Tags</dt>
+          <dd class="werk-tags">
+            {{ range . }}<a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ end }}
+          </dd>
+        {{ end }}
       </dl>
       {{ with .Params.beschrijving }}
         <div class="werk-beschrijving">{{ . | markdownify }}</div>
@@ -57,6 +63,7 @@
           <label>Techniek <input name="techniek" placeholder="bijv. Gietwerk (verloren was)" /></label>
           <label>Materiaal <input name="materiaal" placeholder="bijv. Brons" /></label>
           <label>Afmetingen <input name="afmetingen" placeholder="bijv. 32 × 20 × 24 cm" /></label>
+          <label>Tags <input name="tags" placeholder="bijv. Moniek, Anneke (gescheiden door komma's)" /></label>
           <label>Beschrijving <textarea name="beschrijving" rows="6"></textarea></label>
           <button type="submit">Versturen</button>
         </form>

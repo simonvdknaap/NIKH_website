@@ -16,3 +16,8 @@ theme = 'kaiser'
   # Het invulformulier op de werkpagina's stuurt de gegevens naar dit adres
   # (via formsubmit.co, zie assets/js/custom.js)
   formulier_email = '4.tannest.coconut@icloud.com'
+
+[[menus.main]]
+  name = 'Tags'
+  pageRef = '/tags'
+  weight = 80

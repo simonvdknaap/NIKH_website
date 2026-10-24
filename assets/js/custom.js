@@ -1,6 +1,42 @@
 /* custom.js */
 
 /*
+ * Filteren op tag op de albumpagina's. De knoppen staan in
+ * layouts/partials/tag-filter.html, de foto's hebben data-tags.
+ * De gekozen tag komt in het adres (?tag=moniek), zodat je ernaar kunt linken.
+ */
+const tagFilter = document.querySelector(".tag-filter");
+
+if (tagFilter) {
+  const buttons = tagFilter.querySelectorAll("button");
+  const link = tagFilter.querySelector(".tag-filter-link");
+  const items = document.querySelectorAll("#gallery .gallery-item");
+
+  const kiesTag = (tag) => {
+    const button = Array.from(buttons).find((b) => b.dataset.tag === tag) || buttons[0];
+    tag = button.dataset.tag;
+    buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
+    items.forEach((item) => {
+      item.hidden = tag !== "" && !(item.dataset.tags || "").split(" ").includes(tag);
+    });
+    link.hidden = !tag || !button.dataset.href;
+    if (!link.hidden) {
+      link.href = button.dataset.href;
+      link.textContent = `Alle werken met ${button.firstChild.textContent.trim()} →`;
+    }
+    const url = new URL(window.location.href);
+    if (tag) url.searchParams.set("tag", tag);
+    else url.searchParams.delete("tag");
+    history.replaceState(null, "", url);
+    window.dispatchEvent(new Event("gallery:update"));
+  };
+
+  buttons.forEach((button) => button.addEventListener("click", () => kiesTag(button.dataset.tag)));
+  const start = new URLSearchParams(window.location.search).get("tag");
+  if (start) window.addEventListener("load", () => kiesTag(start));
+}
+
+/*
  * Beheermodus voor de werkpagina's.
  * Zet aan met ?beheer=1 achter een adres van de site, uit met ?beheer=0.
  * De keuze wordt in deze browser onthouden.
@@ -30,6 +66,11 @@ function maakYaml(form) {
     const value = (data.get(veld) || "").trim();
     if (value) regels.push(`${veld}: ${yamlWaarde(value)}`);
   }
+  const tags = (data.get("tags") || "")
+    .split(",")
+    .map((tag) => tag.trim())
+    .filter(Boolean);
+  if (tags.length) regels.push(`tags: ${JSON.stringify(tags)}`);
   const beschrijving = (data.get("beschrijving") || "").replace(/\r\n/g, "\n").trim();
   if (beschrijving) {
     regels.push("beschrijving: |");

@@ -44,12 +44,19 @@ jaar: 1987
 techniek: "Gietwerk (verloren was)"
 materiaal: "Brons"
 afmetingen: "32 × 20 × 24 cm"
+tags: ["Moniek", "Anneke"]
 beschrijving: |
   Vrije tekst over het werk. Je kunt **vet** en *cursief* gebruiken,
   en meerdere regels.
 ```
 
 - Velden die ontbreken worden niet getoond.
+- `tags` is een lijst, bijvoorbeeld de persoon die het werk voorstelt. Elke tag
+  krijgt een eigen overzichtspagina met alle werken met die tag, uit alle
+  categorieën (bijvoorbeeld `/tags/moniek/`; alle tags staan onder **Tags** in
+  het menu). Op de pagina van een categorie kun je met knoppen boven de foto's
+  filteren op tag. Schrijf een tag steeds op dezelfde manier: `Moniek` en
+  `moniek` worden wel samengevoegd, maar `Monique` niet.
 - Zonder `titel` wordt de bestandsnaam de titel: `K_portret-oude-man.jpg`
   wordt "Portret oude man".
 - Zonder `.yaml`-bestand krijgt de foto ook een pagina, alleen met de titel

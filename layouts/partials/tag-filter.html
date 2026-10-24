@@ -1,0 +1,24 @@
+{{/*
+  Filterknoppen boven de foto's van een album: één knop per tag die bij de
+  werken in dit album voorkomt. Het filteren gebeurt in assets/js/custom.js.
+*/}}
+{{ $counts := dict }}
+{{ range .Resources.ByType "image" }}
+  {{ with .Params.werk }}
+    {{ with $.GetPage . }}
+      {{ range .Params.tags }}
+        {{ $counts = merge $counts (dict . (add (index $counts . | default 0) 1)) }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+{{ with $counts }}
+  <nav class="tag-filter" aria-label="Filter op tag">
+    <button type="button" data-tag="" aria-pressed="true">Alle</button>
+    {{ range $tag, $count := . }}
+      {{ $term := site.GetPage (printf "/tags/%s" (urlize $tag)) }}
+      <button type="button" data-tag="{{ urlize $tag }}" data-href="{{ with $term }}{{ .RelPermalink }}{{ end }}" aria-pressed="false">{{ $tag }} <span>{{ $count }}</span></button>
+    {{ end }}
+    <a class="tag-filter-link" href="" hidden></a>
+  </nav>
+{{ end }}
