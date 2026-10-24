@@ -43,7 +43,7 @@
         "kind" "page"
         "layout" "werk"
         "params" (merge $info (dict "afbeelding" $name "bestand" $base "heeft_info" $heeftInfo))
-        "build" (dict "list" "never")
+        "build" (dict "list" "always")
       ) }}
       {{ $.AddResource (dict
         "path" (printf "%s/%s/%s" $album $slug $name)

@@ -55,7 +55,8 @@ main h3 {
   font-variant-numeric: lining-nums;
 }
 
-main .home-caption h2 {
+main .home-caption h2,
+main .card h2 {
   font-family: inherit;
   font-weight: 400;
 }
@@ -329,4 +330,63 @@ section.gallery {
   max-width: 1280px;
   padding-right: 1.5rem;
   padding-left: 1.5rem;
+}
+
+/* Filteren op tag (albumpagina's) */
+.tag-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 1280px;
+  margin: -1.5rem auto 2rem;
+  padding: 0 1.5rem;
+}
+
+.tag-filter button {
+  padding: 0.375rem 0.875rem;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-1);
+  font: inherit;
+  font-size: 0.9375rem;
+  cursor: pointer;
+}
+
+.tag-filter button span {
+  color: var(--text-2);
+  font-size: 0.8125rem;
+}
+
+.tag-filter button[aria-pressed="true"] {
+  border-color: var(--text-1);
+  background: var(--text-1);
+  color: var(--surface-1);
+}
+
+.tag-filter button[aria-pressed="true"] span {
+  color: var(--surface-2);
+}
+
+.tag-filter-link {
+  margin-left: auto;
+  font-size: 0.9375rem;
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
+}
+
+.gallery-item[hidden] {
+  display: none !important;
+}
+
+/* Tags op de pagina van een werk */
+.werk-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+}
+
+.werk-tags a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
