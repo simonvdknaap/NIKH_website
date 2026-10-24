@@ -3,7 +3,7 @@ description: Een voorbeeldwebsite voor NIKH (Herman Hopman)
 lastmod: 2025-12-20
 title: NIKH Gallerie
 resources:
-  - src: martin-martz-wRuhOOaG-Z4-unsplash.jpg
+  - src: home-cover.jpg
     params:
       cover: true # cover of the home page is used for OpenGraph cards, etc.
 menus:
