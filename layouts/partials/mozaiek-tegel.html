@@ -1,0 +1,19 @@
+{{/*
+  Eén tegel in een mozaïek (zoals op de startpagina): foto met de naam en het
+  aantal werken als label linksonder.
+  Context: dict "pagina" (waar de tegel naartoe linkt), "afbeelding" (resource)
+  en "aantal" (aantal werken).
+*/}}
+{{ with .afbeelding }}
+  {{ $img := .Filter (slice images.AutoOrient (images.Process "fit 1000x1000")) }}
+  {{ $color := index $img.Colors 0 | default "transparent" }}
+  <a class="home-item" href="{{ $.pagina.RelPermalink }}">
+    <figure style="background-color: {{ $color }}">
+      <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ $.pagina.Title }}" loading="lazy" />
+    </figure>
+    <div class="home-caption">
+      <h2>{{ $.pagina.Title }}</h2>
+      <p>{{ $.aantal }} {{ cond (eq $.aantal 1) "werk" "werken" }}</p>
+    </div>
+  </a>
+{{ end }}
