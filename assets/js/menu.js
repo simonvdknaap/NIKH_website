@@ -1,21 +1,24 @@
 /*
- * Menu: de items verschijnen rechts in de kop, naast de menuknop. Er schuift
- * niets over de pagina en de inhoud verspringt niet. Sluiten met de knop of
- * met Escape.
+ * Menu. Groot scherm: altijd zichtbaar in de kop (zie custom.css).
+ * Telefoon: de menuknop opent het menu als blok onder de kop; sluiten met de
+ * knop, Escape of een klik ernaast.
  */
 const toggle = document.getElementById("menu-toggle");
 const menu = document.getElementById("menu");
+const telefoon = window.matchMedia("(max-width: 799px)");
 
 if (toggle && menu) {
   menu.classList.remove("hidden");
 
   const zet = (open) => {
     menu.classList.toggle("open", open);
-    menu.inert = !open;
+    // Dicht op de telefoon: niet bereikbaar met Tab; op groot scherm altijd bereikbaar
+    menu.inert = telefoon.matches && !open;
     toggle.setAttribute("aria-expanded", String(open));
   };
 
   zet(false);
+  telefoon.addEventListener("change", () => zet(false));
   toggle.addEventListener("click", (event) => {
     event.preventDefault();
     zet(!menu.classList.contains("open"));
@@ -26,4 +29,15 @@ if (toggle && menu) {
       toggle.focus();
     }
   });
+  // Tik naast het open menu: alleen sluiten, niet ook de link eronder volgen
+  document.addEventListener(
+    "click",
+    (event) => {
+      if (!menu.classList.contains("open") || menu.contains(event.target) || toggle.contains(event.target)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      zet(false);
+    },
+    true,
+  );
 }
