@@ -230,7 +230,6 @@ main .home-caption h2 {
 
 .werk-afbeelding {
   display: block;
-  background: var(--surface-2);
   overflow: hidden;
   cursor: zoom-in;
 }
@@ -268,10 +267,18 @@ main .home-caption h2 {
   object-fit: cover;
 }
 
+/*
+ * Hoofdfoto altijd helemaal in beeld: nooit hoger dan het scherm (min de kop
+ * en marges); staande foto's worden dan smaller in plaats van te hoog.
+ */
 .werk-afbeelding img {
   display: block;
   width: 100%;
   height: auto;
+  max-height: calc(100vh - 9rem);
+  max-height: calc(100svh - 9rem);
+  object-fit: contain;
+  object-position: left top;
 }
 
 .werk-info h1 {
