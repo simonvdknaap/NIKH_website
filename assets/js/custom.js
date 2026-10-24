@@ -38,58 +38,44 @@ function maakYaml(form) {
   return regels.join("\n") + "\n";
 }
 
-function zetStatus(form, tekst, isFout = false) {
-  const status = form.querySelector(".werk-form-status");
-  status.textContent = tekst;
-  status.classList.toggle("fout", isFout);
-}
-
 if (beheerModus()) {
   document.querySelectorAll(".werk-beheer").forEach((el) => (el.hidden = false));
 
+  /* Terug van formsubmit.co na het versturen (?verstuurd=1) */
+  if (new URLSearchParams(window.location.search).get("verstuurd") === "1") {
+    document.querySelectorAll(".werk-form").forEach((form) => {
+      const melding = document.createElement("p");
+      melding.className = "werk-form-verstuurd";
+      melding.textContent = "Verstuurd, dank je wel! De gegevens komen binnenkort op de website.";
+      form.replaceWith(melding);
+    });
+  }
+
+  /*
+   * Bij Versturen: maak het .yaml-bestand, voeg het toe als bijlage en verstuur
+   * het formulier naar formsubmit.co, dat alles naar het e-mailadres stuurt.
+   */
   document.querySelectorAll(".werk-form").forEach((form) => {
-    form.addEventListener("submit", async (event) => {
+    form.addEventListener("submit", (event) => {
       event.preventDefault();
-      const { email, bestand } = form.dataset;
-      const data = new FormData(form);
-      const veld = (naam) => (data.get(naam) || "").trim();
-      const button = form.querySelector("button");
+      const { bestand } = form.dataset;
+      const yaml = maakYaml(form);
+      const pagina = window.location.origin + window.location.pathname;
 
-      const bericht = {
-        _subject: `NIKH website: gegevens voor ${bestand}`,
-        _template: "box",
-        _captcha: "false",
-        _honey: veld("_honey"),
-        Foto: bestand,
-        Pagina: window.location.origin + window.location.pathname,
-        Titel: veld("titel"),
-        Jaar: veld("jaar"),
-        Techniek: veld("techniek"),
-        Materiaal: veld("materiaal"),
-        Afmetingen: veld("afmetingen"),
-        Beschrijving: veld("beschrijving"),
-        [`Inhoud voor images/${bestand}.yaml`]: maakYaml(form),
-      };
-
-      button.disabled = true;
-      zetStatus(form, "Bezig met versturen…");
+      form.elements.yaml.value = yaml;
+      form.elements.Pagina.value = pagina;
+      form.elements._next.value = `${pagina}?verstuurd=1`;
       try {
-        const response = await fetch(`https://formsubmit.co/ajax/${email}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Accept: "application/json" },
-          body: JSON.stringify(bericht),
-        });
-        const result = await response.json().catch(() => ({}));
-        if (!response.ok || String(result.success) !== "true") {
-          throw new Error(result.message || `HTTP ${response.status}`);
-        }
-        zetStatus(form, "Verstuurd, dank je wel! De gegevens komen binnenkort op de website.");
-        form.querySelectorAll("input, textarea").forEach((el) => (el.disabled = true));
+        const bijlage = new DataTransfer();
+        bijlage.items.add(new File([yaml], `${bestand}.yaml`, { type: "text/plain" }));
+        form.elements.attachment.files = bijlage.files;
       } catch (error) {
+        // Oude browser: geen bijlage, de inhoud staat dan alleen in het veld "yaml".
         console.error(error);
-        zetStatus(form, "Versturen is niet gelukt. Probeer het later nog eens.", true);
-        button.disabled = false;
       }
+
+      form.querySelector("button").disabled = true;
+      form.submit();
     });
   });
 }

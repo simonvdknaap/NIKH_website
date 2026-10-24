@@ -136,12 +136,11 @@
   cursor: default;
 }
 
-.werk-form .werk-form-status {
-  color: var(--text-1);
-}
-
-.werk-form .werk-form-status.fout {
-  color: #c0392b;
+.werk-form-verstuurd {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
 }
 
 .werk-form-honey {

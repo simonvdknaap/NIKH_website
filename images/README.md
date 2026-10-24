@@ -67,10 +67,10 @@ De gegevens kunnen ook op de website zelf worden ingevuld, zonder GitHub:
 3. Vul de velden in en klik op **Versturen**. De gegevens gaan per e-mail
    naar het adres in `hugo.toml` (`formulier_email`).
 
-De e-mail bevat alle velden én de kant-en-klare inhoud voor het
-`.yaml`-bestand. Maak in `images/` een bestand met de naam uit de e-mail
-(bijvoorbeeld `K_portret.yaml`), plak die inhoud erin en sla het op; de
-website wordt dan vanzelf bijgewerkt.
+De e-mail bevat alle velden en het kant-en-klare `.yaml`-bestand als
+**bijlage**, met de juiste naam (bijvoorbeeld `K_portret.yaml`). Zet die
+bijlage in de map `images/` en de website wordt vanzelf bijgewerkt. (De inhoud
+staat ook in het veld `yaml` in de e-mail, voor het geval de bijlage ontbreekt.)
 
 Het versturen loopt via [FormSubmit](https://formsubmit.co). **De allereerste
 keer** stuurt FormSubmit een bevestigingsmail naar het ontvangstadres: klik
