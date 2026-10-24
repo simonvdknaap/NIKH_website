@@ -1,28 +1,41 @@
 {{/*
   Werk: alles op één pagina, per groep: categorieën, personen (tags),
-  technieken en materialen. Elke kaart linkt naar de eigen pagina.
+  technieken en materialen, elk als mozaïek zoals op de startpagina.
 */}}
 {{ define "main" }}
   {{ partial "title.html" . }}
 
-  {{/* Categorieën: de albums, zoals op de startpagina */}}
+  {{/* Categorieën: de albums */}}
   {{ with where site.Home.Pages "Params.private" "ne" true }}
     <section class="werk-groep">
       <h2>Categorieën</h2>
-      <div class="galleries">
-        {{ range . }}{{ partial "album-card.html" . }}{{ end }}
+      <div class="home-grid werk-mozaiek">
+        {{ range . }}
+          {{ with partial "get-gallery.html" . }}
+            {{ $covers := where (.page.Resources.ByType "image") "Params.cover" true }}
+            {{ $afbeelding := index $covers 0 | default ((.page.Resources.ByType "image").GetMatch "*feature*") | default (index (sort .images "Name") 0) }}
+            {{ partial "mozaiek-tegel.html" (dict "pagina" .page "afbeelding" $afbeelding "aantal" .imageCount) }}
+          {{ end }}
+        {{ end }}
       </div>
     </section>
   {{ end }}
 
+  {{/* Personen, technieken, materialen: foto van het eerste werk */}}
   {{ range slice (slice "tags" "Personen") (slice "technieken" "Technieken") (slice "materialen" "Materialen") }}
     {{ $titel := index . 1 }}
     {{ with site.GetPage (printf "/%s" (index . 0)) }}
       {{ with .Pages.ByTitle }}
         <section class="werk-groep">
           <h2>{{ $titel }}</h2>
-          <div class="galleries">
-            {{ range . }}{{ partial "term-card.html" . }}{{ end }}
+          <div class="home-grid werk-mozaiek">
+            {{ range . }}
+              {{ $term := . }}
+              {{ $werken := where .Pages "Params.afbeelding" "!=" nil }}
+              {{ with index (sort $werken "Params.afbeelding") 0 }}
+                {{ partial "mozaiek-tegel.html" (dict "pagina" $term "afbeelding" (.Resources.GetMatch .Params.afbeelding) "aantal" (len $werken)) }}
+              {{ end }}
+            {{ end }}
           </div>
         </section>
       {{ end }}
