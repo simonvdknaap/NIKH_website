@@ -1,6 +1,8 @@
 # Foto's
 
 Zet hier alle foto's neer. De **eerste letter** van de bestandsnaam bepaalt
+Each album’s cover is its first photo. To choose a cover yourself, put feature in the file name, for example K_feature-portret.jpg.
+
 in welk album de foto op de website komt:
 
 | Eerste letter | Album     |
