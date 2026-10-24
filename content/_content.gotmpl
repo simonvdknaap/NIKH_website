@@ -25,6 +25,12 @@
         {{ $heeftInfo = true }}
       {{ end }}
 
+      {{/* Techniek en materiaal worden ook filters (taxonomieën): tekst of lijst */}}
+      {{ $technieken := slice }}
+      {{ with $info.techniek }}{{ $technieken = cond (reflect.IsSlice .) . (slice .) }}{{ end }}
+      {{ $materialen := slice }}
+      {{ with $info.materiaal }}{{ $materialen = cond (reflect.IsSlice .) . (slice .) }}{{ end }}
+
       {{/* Zonder titel: maak er een van de bestandsnaam, "K_oude-man" -> "Oude man" */}}
       {{ $title := $info.titel | default ($base | replaceRE `^[a-zA-Z][-_ ]*` "" | replaceRE `[-_]+` " " | strings.FirstUpper) }}
 
@@ -42,7 +48,7 @@
         "title" $title
         "kind" "page"
         "layout" "werk"
-        "params" (merge $info (dict "afbeelding" $name "bestand" $base "heeft_info" $heeftInfo))
+        "params" (merge $info (dict "afbeelding" $name "bestand" $base "heeft_info" $heeftInfo "technieken" $technieken "materialen" $materialen))
         "build" (dict "list" "always")
       ) }}
       {{ $.AddResource (dict

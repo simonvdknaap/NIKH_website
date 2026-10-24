@@ -1,24 +1,43 @@
 {{/*
-  Filterknoppen boven de foto's van een album: één knop per tag die bij de
-  werken in dit album voorkomt. Het filteren gebeurt in assets/js/custom.js.
+  Filterknoppen boven de foto's van een album: per groep (tags, techniek,
+  materiaal) een knop voor elke waarde die in dit album voorkomt.
+  Het filteren gebeurt in assets/js/custom.js.
 */}}
-{{ $counts := dict }}
+{{ $werken := slice }}
 {{ range .Resources.ByType "image" }}
-  {{ with .Params.werk }}
-    {{ with $.GetPage . }}
-      {{ range .Params.tags }}
-        {{ $counts = merge $counts (dict . (add (index $counts . | default 0) 1)) }}
-      {{ end }}
+  {{ with .Params.werk }}{{ with $.GetPage . }}{{ $werken = $werken | append . }}{{ end }}{{ end }}
+{{ end }}
+
+{{ $groepen := slice }}
+{{ range $g := slice (slice "tags" "Tags") (slice "technieken" "Techniek") (slice "materialen" "Materiaal") }}
+  {{ $tax := index $g 0 }}
+  {{ $counts := dict }}
+  {{ $terms := dict }}
+  {{ range $werken }}
+    {{ range .GetTerms $tax }}
+      {{ $counts = merge $counts (dict .LinkTitle (add (index $counts .LinkTitle | default 0) 1)) }}
+      {{ $terms = merge $terms (dict .LinkTitle .) }}
     {{ end }}
   {{ end }}
+  {{ with $counts }}
+    {{ $groepen = $groepen | append (dict "tax" $tax "label" (index $g 1) "counts" $counts "terms" $terms) }}
+  {{ end }}
 {{ end }}
-{{ with $counts }}
-  <nav class="tag-filter" aria-label="Filter op tag">
-    <button type="button" data-tag="" aria-pressed="true">Alle</button>
-    {{ range $tag, $count := . }}
-      {{ $term := site.GetPage (printf "/tags/%s" (urlize $tag)) }}
-      <button type="button" data-tag="{{ urlize $tag }}" data-href="{{ with $term }}{{ .RelPermalink }}{{ end }}" aria-pressed="false">{{ $tag }} <span>{{ $count }}</span></button>
+
+{{ with $groepen }}
+  <nav class="tag-filter" aria-label="Filteren">
+    {{ range . }}
+      {{ $groep := . }}
+      <div class="tag-filter-groep" data-groep="{{ .tax }}">
+        <span class="tag-filter-label">{{ .label }}</span>
+        <button type="button" data-tag="" aria-pressed="true">Alle</button>
+        {{ range $name, $count := .counts }}
+          {{ $term := index $groep.terms $name }}
+          <button type="button" data-tag="{{ urlize (lower $name) }}" data-href="{{ $term.RelPermalink }}" aria-pressed="false">{{ $name }} <span>{{ $count }}</span></button>
+        {{ end }}
+      </div>
     {{ end }}
     <a class="tag-filter-link" href="" hidden></a>
+    <p class="tag-filter-leeg" hidden>Geen werken gevonden met deze combinatie.</p>
   </nav>
 {{ end }}

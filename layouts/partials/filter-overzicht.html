@@ -1,0 +1,25 @@
+{{/* Overzicht van alle tags, technieken of materialen, elk met de foto van een van de werken */}}
+  <hgroup>
+    <h1>{{ .Title }}</h1>
+  </hgroup>
+  <section class="galleries">
+    {{ range .Pages.ByTitle }}
+      {{ $term := . }}
+      {{ $werken := where .Pages "Params.afbeelding" "!=" nil }}
+      {{ with index (sort $werken "Params.afbeelding") 0 }}
+        {{ with .Resources.GetMatch .Params.afbeelding }}
+          {{ $img := .Filter (slice images.AutoOrient (images.Process "fill 600x400 Center")) }}
+          {{ $color := index $img.Colors 0 | default "transparent" }}
+          <a class="card" href="{{ $term.RelPermalink }}" title="{{ $term.Title }}">
+            <figure style="background-color: {{ $color }}">
+              <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ $term.Title }}" loading="lazy" />
+            </figure>
+            <div>
+              <h2>{{ $term.Title }}</h2>
+              <p>{{ len $werken }} {{ cond (eq (len $werken) 1) "werk" "werken" }}</p>
+            </div>
+          </a>
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  </section>

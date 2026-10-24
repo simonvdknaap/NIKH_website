@@ -1,9 +1,3 @@
-{{/* Overzicht van alle werken met één tag, uit alle categorieën */}}
 {{ define "main" }}
-  {{ $werken := where .Pages "Params.afbeelding" "!=" nil }}
-  <hgroup>
-    <h1>{{ .Title }}</h1>
-    <p>{{ len $werken }} {{ cond (eq (len $werken) 1) "werk" "werken" }}</p>
-  </hgroup>
-  {{ partial "werk-gallery.html" $werken }}
+  {{ partial "filter-term.html" . }}
 {{ end }}

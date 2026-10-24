@@ -37,9 +37,16 @@
       {{/* Foto's uit images/ linken naar de pagina van het werk in plaats van de lightbox */}}
       {{ $werk := "" }}
       {{ with $image.Params.werk }}{{ $werk = $.GetPage . }}{{ end }}
-      {{ $tags := slice }}
-      {{ with $werk }}{{ range .Params.tags }}{{ $tags = $tags | append (urlize .) }}{{ end }}{{ end }}
-      <a class="gallery-item{{ if $werk }} werk-link{{ end }}"{{ with $tags }} data-tags="{{ delimit . " " }}"{{ end }} href="{{ with $werk }}{{ .RelPermalink }}{{ else }}{{ if $publishResources }}{{ $image.RelPermalink }}{{ else }}{{ $full.RelPermalink }}{{ end }}{{ end }}" data-pswp-src="{{ $full.RelPermalink }}" data-pswp-width="{{ $full.Width }}" data-pswp-height="{{ $full.Height }}" data-pswp-target="{{ $image.Name | urlize }}" title="{{ .Title }}" itemscope itemtype="https://schema.org/ImageObject" style="aspect-ratio: {{ $thumbnail.Width }} / {{ $thumbnail.Height }}">
+      {{/* Termen per filtergroep, voor het filteren op de albumpagina (zie tag-filter.html) */}}
+      {{ $filters := dict "tags" "" "technieken" "" "materialen" "" }}
+      {{ with $werk }}
+        {{ range $tax := slice "tags" "technieken" "materialen" }}
+          {{ $slugs := slice }}
+          {{ range $werk.GetTerms $tax }}{{ $slugs = $slugs | append (urlize (lower .LinkTitle)) }}{{ end }}
+          {{ $filters = merge $filters (dict $tax (delimit $slugs " ")) }}
+        {{ end }}
+      {{ end }}
+      <a class="gallery-item{{ if $werk }} werk-link{{ end }}" data-tags="{{ $filters.tags }}" data-technieken="{{ $filters.technieken }}" data-materialen="{{ $filters.materialen }}" href="{{ with $werk }}{{ .RelPermalink }}{{ else }}{{ if $publishResources }}{{ $image.RelPermalink }}{{ else }}{{ $full.RelPermalink }}{{ end }}{{ end }}" data-pswp-src="{{ $full.RelPermalink }}" data-pswp-width="{{ $full.Width }}" data-pswp-height="{{ $full.Height }}" data-pswp-target="{{ $image.Name | urlize }}" title="{{ .Title }}" itemscope itemtype="https://schema.org/ImageObject" style="aspect-ratio: {{ $thumbnail.Width }} / {{ $thumbnail.Height }}">
         <figure style="background-color: {{ $color }}; aspect-ratio: {{ $thumbnail.Width }} / {{ $thumbnail.Height }}">
           <img class="lazyload" width="{{ $thumbnail.Width }}" height="{{ $thumbnail.Height }}" data-src="{{ $thumbnail.RelPermalink }}" alt="{{ .Title }}" />
         </figure>
