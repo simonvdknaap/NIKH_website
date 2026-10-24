@@ -1,0 +1,21 @@
+{{/*
+  Verdeelt de foto's uit de map images/ over de albums.
+  De eerste letter van de bestandsnaam bepaalt het album:
+    K = Koppen, P = Penningen, B = Buste, L = Lichamen
+  Bestanden met een andere eerste letter worden overgeslagen (met een waarschuwing).
+*/}}
+{{ $albums := dict "k" "koppen" "p" "penningen" "b" "buste" "l" "lichamen" }}
+{{ range resources.Match "images/*" }}
+  {{ if eq .MediaType.MainType "image" }}
+    {{ $name := path.Base .Name }}
+    {{ $album := index $albums (substr $name 0 1 | lower) }}
+    {{ if $album }}
+      {{ $.AddResource (dict
+        "path" (printf "%s/%s" $album $name)
+        "content" (dict "value" .)
+      ) }}
+    {{ else }}
+      {{ warnf "images/%s: bestandsnaam begint niet met K, P, B of L; foto wordt overgeslagen" $name }}
+    {{ end }}
+  {{ end }}
+{{ end }}
