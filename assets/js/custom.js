@@ -1,70 +1,63 @@
 /* custom.js */
 
 /*
- * Filteren op de albumpagina's, per groep: tags, technieken, materialen.
- * De knoppen staan in layouts/partials/tag-filter.html; de foto's hebben
- * data-tags, data-technieken en data-materialen. Filters uit verschillende
- * groepen worden gecombineerd. De keuze komt in het adres
- * (?tags=moniek&materialen=brons), zodat je ernaar kunt linken.
+ * Filteren: één rij knoppen met alle tags, technieken en materialen
+ * (layouts/partials/filter.html). De foto's hebben data-tags,
+ * data-technieken en data-materialen. Eén keuze tegelijk; die komt in het
+ * adres (bijv. ?materialen=brons), zodat je ernaar kunt linken.
  */
 const tagFilter = document.querySelector(".tag-filter");
 
 if (tagFilter) {
-  const groepen = tagFilter.querySelectorAll(".tag-filter-groep");
+  const buttons = Array.from(tagFilter.querySelectorAll("button"));
   const link = tagFilter.querySelector(".tag-filter-link");
   const leeg = tagFilter.querySelector(".tag-filter-leeg");
   const items = document.querySelectorAll("#gallery .gallery-item");
-  const keuze = {};
+  const groepen = ["tags", "technieken", "materialen"];
 
-  const pasToe = (laatste) => {
+  const kies = (button) => {
+    const { groep, tag } = button.dataset;
+    buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
     items.forEach((item) => {
-      item.hidden = Object.entries(keuze).some(
-        ([groep, tag]) => tag && !(item.dataset[groep] || "").split(" ").includes(tag),
-      );
+      item.hidden = Boolean(tag) && !(item.dataset[groep] || "").split(" ").includes(tag);
     });
     leeg.hidden = Array.from(items).some((item) => !item.hidden);
 
-    // Link naar de overzichtspagina van de laatst gekozen waarde
-    link.hidden = !laatste || !laatste.dataset.tag || !laatste.dataset.href;
+    link.hidden = !tag || !button.dataset.href;
     if (!link.hidden) {
-      link.href = laatste.dataset.href;
-      link.textContent = `Alle werken met ${laatste.firstChild.textContent.trim()} →`;
+      link.href = button.dataset.href;
+      link.textContent = `Alle werken met ${button.firstChild.textContent.trim()} →`;
     }
 
     const url = new URL(window.location.href);
-    url.searchParams.delete("tag");
-    for (const [groep, tag] of Object.entries(keuze)) {
-      if (tag) url.searchParams.set(groep, tag);
-      else url.searchParams.delete(groep);
-    }
+    ["tag", ...groepen].forEach((g) => url.searchParams.delete(g));
+    if (tag) url.searchParams.set(groep, tag);
     history.replaceState(null, "", url);
     window.dispatchEvent(new Event("gallery:update"));
   };
 
-  const kies = (groepEl, tag) => {
-    const buttons = Array.from(groepEl.querySelectorAll("button"));
-    const button = buttons.find((b) => b.dataset.tag === tag) || buttons[0];
-    buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
-    keuze[groepEl.dataset.groep] = button.dataset.tag;
-    return button;
-  };
+  buttons.forEach((button) => button.addEventListener("click", () => kies(button)));
 
-  groepen.forEach((groepEl) => {
-    keuze[groepEl.dataset.groep] = "";
-    groepEl.querySelectorAll("button").forEach((button) =>
-      button.addEventListener("click", () => pasToe(kies(groepEl, button.dataset.tag))),
-    );
-  });
-
-  // Filters uit het adres overnemen (?tag= is de oude naam voor ?tags=)
+  // Keuze uit het adres overnemen (?tag= is de oude naam voor ?tags=)
   const params = new URLSearchParams(window.location.search);
-  let laatste = null;
-  groepen.forEach((groepEl) => {
-    const groep = groepEl.dataset.groep;
-    const tag = params.get(groep) || (groep === "tags" ? params.get("tag") : null);
-    if (tag) laatste = kies(groepEl, tag);
+  const start = buttons.find((b) => {
+    const { groep, tag } = b.dataset;
+    return tag && (params.get(groep) === tag || (groep === "tags" && params.get("tag") === tag));
   });
-  if (laatste) window.addEventListener("load", () => pasToe(laatste));
+  if (start) window.addEventListener("load", () => kies(start));
+}
+
+/*
+ * Startpagina: het uitgelichte blok toont elke dag een andere tag.
+ * Alle tags staan in de pagina; hier wordt er één zichtbaar gemaakt.
+ */
+const uitgelicht = document.querySelector("[data-uitgelicht]");
+
+if (uitgelicht) {
+  const opties = uitgelicht.querySelectorAll(":scope > a");
+  const dag = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000);
+  const keuze = dag % opties.length;
+  opties.forEach((optie, i) => (optie.hidden = i !== keuze));
 }
 
 /*

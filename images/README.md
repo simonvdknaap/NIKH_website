@@ -51,8 +51,9 @@ beschrijving: |
 ```
 
 - Velden die ontbreken worden niet getoond.
-- `techniek` en `materiaal` worden ook filters, net als tags: op de pagina van
-  een categorie kun je erop filteren, en elke techniek en elk materiaal krijgt
+- `techniek` en `materiaal` worden ook filters, net als tags: bovenaan elke
+  categorie- en overzichtspagina staat één rij knoppen met alle tags,
+  technieken en materialen om op te filteren, en elke techniek en elk materiaal krijgt
   een eigen overzichtspagina (onder **Technieken** en **Materialen** in het
   menu). Meerdere materialen schrijf je als lijst:
   `materiaal: ["Brons", "Hardsteen"]` (in het formulier: gescheiden door
@@ -64,6 +65,8 @@ beschrijving: |
   filteren op tag. Schrijf een tag steeds op dezelfde manier: `Moniek` en
   `moniek` worden wel samengevoegd, maar `Monique` niet. Dat geldt ook voor
   technieken en materialen.
+- Op de startpagina wordt elke dag een andere tag uitgelicht (het grote blok),
+  met de foto van het eerste werk met die tag.
 - Zonder `titel` wordt de bestandsnaam de titel: `K_portret-oude-man.jpg`
   wordt "Portret oude man".
 - Zonder `.yaml`-bestand krijgt de foto ook een pagina, alleen met de titel

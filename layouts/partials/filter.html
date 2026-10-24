@@ -1,0 +1,38 @@
+{{/*
+  Eén lange rij filterknoppen: alle tags, technieken en materialen van de
+  gegeven werken, op alfabet. Het filteren gebeurt in assets/js/custom.js.
+  Context: dict "werken" (werkpagina's) en optioneel "huidig" (de tag-,
+  techniek- of materiaalpagina zelf; die waarde wordt niet getoond).
+*/}}
+{{ $huidig := .huidig }}
+{{ $opties := dict }}
+{{ range $werk := .werken }}
+  {{ range $tax := slice "tags" "technieken" "materialen" }}
+    {{ range $werk.GetTerms $tax }}
+      {{ if not (and $huidig (eq .RelPermalink $huidig.RelPermalink)) }}
+        {{ $key := printf "%s|%s" (lower .LinkTitle) $tax }}
+        {{ $count := 1 }}
+        {{ with index $opties $key }}{{ $count = add .count 1 }}{{ end }}
+        {{ $opties = merge $opties (dict $key (dict
+          "naam" .LinkTitle
+          "groep" $tax
+          "slug" (urlize (lower .LinkTitle))
+          "href" .RelPermalink
+          "count" $count
+        )) }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+{{ with $opties }}
+  <nav class="tag-filter" aria-label="Filteren">
+    <div class="tag-filter-knoppen">
+      <button type="button" data-groep="" data-tag="" aria-pressed="true">Alle</button>
+      {{ range $key, $optie := . }}
+        <button type="button" data-groep="{{ $optie.groep }}" data-tag="{{ $optie.slug }}" data-href="{{ $optie.href }}" aria-pressed="false">{{ $optie.naam }} <span>{{ $optie.count }}</span></button>
+      {{ end }}
+    </div>
+    <a class="tag-filter-link" href="" hidden></a>
+    <p class="tag-filter-leeg" hidden>Geen werken gevonden.</p>
+  </nav>
+{{ end }}
