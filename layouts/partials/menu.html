@@ -1,8 +1,11 @@
+{{/* Werk is ook actief op alle pagina's die eronder vallen: categorieën, werken, personen, technieken, materialen */}}
+{{ $inWerk := or (eq page.Kind "term") (in (slice "werk" "album") page.Layout) }}
 {{ with site.Menus.main }}
   <menu class="hidden" id="menu">
     {{ range . }}
       <li itemscope itemtype="http://www.schema.org/SiteNavigationElement">
-        <a aria-current="{{ or (page.IsMenuCurrent .Menu .) (page.HasMenuCurrent .Menu .) }}" href="{{ .URL }}" itemprop="url">
+        {{ $actief := or (page.IsMenuCurrent .Menu .) (page.HasMenuCurrent .Menu .) (and $inWerk (eq .PageRef "/werk")) }}
+        <a aria-current="{{ $actief }}" href="{{ .URL }}" itemprop="url">
           <span itemprop="name">{{ .Name }}</span>
         </a>
       </li>

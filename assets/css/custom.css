@@ -472,12 +472,17 @@ body > header {
 }
 
 #menu a {
-  color: var(--text-2);
+  color: var(--text-1);
 }
 
-#menu a:hover,
+/* Actieve pagina vet */
 #menu a[aria-current="true"] {
-  color: var(--text-1);
+  font-weight: 700;
+}
+
+#menu a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.25em;
 }
 
 @media (min-width: 800px) {
