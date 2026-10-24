@@ -72,6 +72,7 @@ document.querySelectorAll(".werk-fotos").forEach((fotos) => {
       img.src = knop.dataset.src;
       img.width = knop.dataset.width;
       img.height = knop.dataset.height;
+      img.style.setProperty("--r", knop.dataset.width / knop.dataset.height);
       groot.href = knop.dataset.full;
       knoppen.forEach((k) => k.setAttribute("aria-pressed", String(k === knop)));
     }),
@@ -112,6 +113,7 @@ function maakYaml(form) {
     if (veld === "materiaal" && materialen.length > 1) regels.push(`${veld}: ${JSON.stringify(materialen)}`);
     else regels.push(`${veld}: ${yamlWaarde(value)}`);
   }
+  if (data.get("te_koop")) regels.push("te_koop: true");
   const tags = (data.get("tags") || "")
     .split(",")
     .map((tag) => tag.trim())

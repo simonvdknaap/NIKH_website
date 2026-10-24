@@ -65,6 +65,7 @@ jaar: 1987
 techniek: "Gietwerk (verloren was)"
 materiaal: "Brons"
 afmetingen: "32 × 20 × 24 cm"
+te_koop: true
 tags: ["Moniek", "Anneke"]
 beschrijving: |
   Vrije tekst over het werk. Je kunt **vet** en *cursief* gebruiken,
@@ -72,6 +73,11 @@ beschrijving: |
 ```
 
 - Velden die ontbreken worden niet getoond.
+- `te_koop: true` betekent dat het werk te koop is. Op de pagina van het werk
+  staat dan een pastelgroene stip rechtsboven op de foto, "te koop" bij de
+  titel en onder de informatie een oproep om contact op te nemen (met een link
+  naar de Contact-pagina). In de overzichten is dat niet te zien. Weglaten (of
+  `te_koop: false`) als het werk niet te koop is.
 - `techniek` en `materiaal` worden ook filters, net als tags: bovenaan elke
   categorie- en overzichtspagina staat één rij knoppen met alle tags,
   technieken en materialen om op te filteren, en elke techniek en elk materiaal krijgt

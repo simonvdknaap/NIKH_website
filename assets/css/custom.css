@@ -229,8 +229,10 @@ main .home-caption h2 {
 }
 
 .werk-afbeelding {
+  position: relative;
   display: block;
-  overflow: hidden;
+  width: fit-content;
+  max-width: 100%;
   cursor: zoom-in;
 }
 
@@ -273,12 +275,20 @@ main .home-caption h2 {
  */
 .werk-afbeelding img {
   display: block;
-  width: 100%;
+  width: 100vw;
+  max-width: 100%;
   height: auto;
   max-height: calc(100vh - 9rem);
   max-height: calc(100svh - 9rem);
-  object-fit: contain;
-  object-position: left top;
+}
+
+/* De breedte volgt uit de maximale hoogte en de verhouding (--r), zodat het
+   kader precies om de foto past (voor de groene stip in de hoek) */
+@supports (width: calc(1px * 1)) {
+  .werk-afbeelding img {
+    width: calc((100vh - 9rem) * var(--r, 1));
+    width: calc((100svh - 9rem) * var(--r, 1));
+  }
 }
 
 .werk-info h1 {
@@ -676,4 +686,61 @@ main .werk-tegel .home-caption h2 {
 
 .werk-tegel .home-caption p {
   font-size: 0.75rem;
+}
+
+/* Te koop: pastelgroene stip op de foto, label bij de titel, oproep onder de informatie */
+.te-koop-stip {
+  display: inline-block;
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 50%;
+  background: #a9dcb8;
+  box-shadow: 0 0 0 2px var(--surface-1);
+}
+
+.werk-afbeelding .te-koop-stip {
+  position: absolute;
+  top: 0.875rem;
+  right: 0.875rem;
+  width: 1rem;
+  height: 1rem;
+}
+
+.te-koop-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-left: 0.5rem;
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: var(--text-2);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.te-koop-oproep {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.5rem;
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--border);
+}
+
+.te-koop-oproep a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.werk-form .werk-form-vinkje {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-1);
+}
+
+.werk-form .werk-form-vinkje input {
+  width: auto;
 }

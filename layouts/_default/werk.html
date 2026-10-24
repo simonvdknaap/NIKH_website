@@ -8,7 +8,8 @@
         {{ $full := .Filter (slice images.AutoOrient (images.Process "fit 1600x1600")) }}
         {{ $display := .Filter (slice images.AutoOrient (images.Process "fit 1000x1000")) }}
         <a class="werk-afbeelding" href="{{ $full.RelPermalink }}" title="Vergroot">
-          <img src="{{ $display.RelPermalink }}" width="{{ $display.Width }}" height="{{ $display.Height }}" alt="{{ $.Title }}" />
+          <img src="{{ $display.RelPermalink }}" width="{{ $display.Width }}" height="{{ $display.Height }}" alt="{{ $.Title }}" style="--r: {{ printf "%.4f" (div (float $display.Width) $display.Height) }}" />
+          {{ if $.Params.te_koop }}<span class="te-koop-stip" title="Te koop"></span>{{ end }}
         </a>
       {{ end }}
       {{ $namen := .Params.afbeeldingen | default (slice .Params.afbeelding) }}
@@ -30,7 +31,10 @@
     </div>
 
     <div class="werk-info">
-      <h1>{{ .Title }}</h1>
+      <h1>
+        {{ .Title }}
+        {{ if .Params.te_koop }}<span class="te-koop-label"><span class="te-koop-stip" aria-hidden="true"></span>te koop</span>{{ end }}
+      </h1>
       <dl>
         {{ with $album }}
           <dt>Categorie</dt>
@@ -64,6 +68,13 @@
       {{ with .Params.beschrijving }}
         <div class="werk-beschrijving">{{ . | markdownify }}</div>
       {{ end }}
+      {{ if .Params.te_koop }}
+        <p class="te-koop-oproep">
+          <span class="te-koop-stip" aria-hidden="true"></span>
+          Dit werk is te koop. Interesse?
+          {{ with site.GetPage "/contact" }}<a href="{{ .RelPermalink }}">Neem contact op</a>{{ else }}Neem contact op{{ end }}
+        </p>
+      {{ end }}
 
       {{/* Invulformulier: alleen zichtbaar in beheermodus (?beheer=1), zie assets/js/custom.js */}}
       {{ if and site.Params.formulier_email (not .Params.heeft_info) }}
@@ -88,6 +99,7 @@
           <label>Techniek <input name="techniek" placeholder="bijv. Gietwerk (verloren was)" /></label>
           <label>Materiaal <input name="materiaal" placeholder="bijv. Brons, Hardsteen" /></label>
           <label>Afmetingen <input name="afmetingen" placeholder="bijv. 32 × 20 × 24 cm" /></label>
+          <label class="werk-form-vinkje"><input type="checkbox" name="te_koop" value="ja" /> Te koop</label>
           <label>Personen <input name="tags" placeholder="bijv. Moniek, Anneke (gescheiden door komma's)" /></label>
           <label>Beschrijving <textarea name="beschrijving" rows="6"></textarea></label>
           <button type="submit">Versturen</button>
