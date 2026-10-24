@@ -1,9 +1,42 @@
 {{ define "main" }}
-  {{ partial "title.html" . }}
-  {{ partial "featured.html" . }}
-  <section class="galleries">
+  <hgroup class="home-intro">
+    <h1>{{ .Title }}</h1>
+    {{ with .Params.Description }}<p>{{ . | markdownify }}</p>{{ end }}
+  </hgroup>
+
+  {{/* Speelse, versprongen indeling: eerst het uitgelichte album, dan de categorieën */}}
+  <section class="home-grid">
+    {{ range first 1 (where site.Pages.ByDate.Reverse "Params.featured" true) }}
+      {{ with partial "get-gallery.html" . }}
+        {{ $page := .page }}
+        {{ $covers := where ($page.Resources.ByType "image") "Params.cover" true }}
+        {{ $image := index $covers 0 | default (index .images 0) }}
+        {{ $img := $image.Filter (slice images.AutoOrient (images.Process "fit 1400x1400")) }}
+        {{ $color := index $img.Colors 0 | default "transparent" }}
+        <a class="home-item home-featured" href="{{ $page.RelPermalink }}">
+          <figure style="background-color: {{ $color }}">
+            <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ $page.Title }}" />
+          </figure>
+          <div class="home-caption">
+            <h2>{{ $page.Title }}</h2>
+            <p>{{ T "photoCount" (.imageCount | lang.FormatNumber 0) }}</p>
+          </div>
+        </a>
+      {{ end }}
+    {{ end }}
+
     {{ range where .Pages "Params.private" "ne" true }}
-      {{ partial "album-card.html" . }}
+      {{ with partial "get-gallery.html" . }}
+        <a class="home-item home-album" href="{{ .page.RelPermalink }}">
+          <figure style="background-color: {{ .color }}">
+            <img src="{{ .thumbnail.RelPermalink }}" width="{{ .thumbnail.Width }}" height="{{ .thumbnail.Height }}" alt="{{ .page.Title }}" loading="lazy" />
+          </figure>
+          <div class="home-caption">
+            <h2>{{ .page.Title }}</h2>
+            <p>{{ T "photoCount" (.imageCount | lang.FormatNumber 0) }}</p>
+          </div>
+        </a>
+      {{ end }}
     {{ end }}
   </section>
 {{ end }}
