@@ -8,7 +8,8 @@
     {{ with $terug }}
       {{ if not .IsHome }}
         {{/* "Terug naar ..." met de naam van de bovenliggende pagina */}}
-        <a class="header-terug" href="{{ .RelPermalink | default site.Home.RelPermalink }}">
+        {{/* Op een categoriepagina kan de link ook "Terug naar home" worden, als je van de startpagina kwam (assets/js/custom.js) */}}
+        <a class="header-terug" href="{{ .RelPermalink | default site.Home.RelPermalink }}"{{ if eq $.Layout "album" }} data-home="{{ site.Home.RelPermalink }}"{{ end }}>
           <span aria-hidden="true">←</span> Terug naar {{ .Title }}
         </a>
       {{ end }}
