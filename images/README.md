@@ -84,7 +84,7 @@ beschrijving: |
   technieken en materialen om op te filteren, en elke techniek en elk materiaal krijgt
   een eigen pagina, net als een tag. Alle categorieën, personen (tags),
   technieken en materialen staan onder **Werk** in het menu. Meerdere materialen schrijf je als lijst:
-  `materiaal: ["Brons", "Hardsteen"]` (in het formulier: gescheiden door
+  `materiaal: ["Brons", "Hout"]` (in het formulier: gescheiden door
   komma's).
 - `tags` is een lijst van **personen** die het werk voorstelt (op de website
   heet dit *Personen*). Elke tag
