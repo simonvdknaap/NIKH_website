@@ -80,6 +80,35 @@ document.querySelectorAll(".werk-fotos").forEach((fotos) => {
 });
 
 /*
+ * Categoriepagina: "Terug naar home" als je van de startpagina kwam, anders
+ * "Terug naar Werk". Bij terugkomen van een werk geldt de eerdere keuze
+ * (onthouden voor dit bezoek).
+ */
+const terug = document.querySelector(".header-terug[data-home]");
+
+if (terug) {
+  const home = new URL(terug.dataset.home, window.location.href);
+  const werk = new URL(terug.getAttribute("href"), window.location.href);
+  const sleutel = "nikh-terug:" + window.location.pathname;
+  let herkomst = null;
+  try {
+    const vorige = document.referrer ? new URL(document.referrer) : null;
+    if (vorige && vorige.origin === window.location.origin) {
+      if (vorige.pathname === home.pathname) herkomst = "home";
+      else if (vorige.pathname === werk.pathname) herkomst = "werk";
+    }
+    if (herkomst) sessionStorage.setItem(sleutel, herkomst);
+    else herkomst = sessionStorage.getItem(sleutel);
+  } catch {
+    // geen sessionStorage: dan blijft het "Terug naar Werk"
+  }
+  if (herkomst === "home") {
+    terug.href = home.href;
+    terug.lastChild.textContent = " Terug naar home";
+  }
+}
+
+/*
  * Beheermodus voor de werkpagina's.
  * Zet aan met ?beheer=1 achter een adres van de site, uit met ?beheer=0.
  * De keuze wordt in deze browser onthouden.
