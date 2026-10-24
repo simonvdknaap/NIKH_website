@@ -3,7 +3,7 @@
   werk een eigen pagina met informatie over het werk.
 
   De eerste letter van de bestandsnaam bepaalt het album:
-    K = Koppen, P = Penningen, B = Buste, L = Lichamen, H = Handen
+    K = Koppen, P = Penningen, B = Buste, L = Lichamen, H = Handen, O = Overig
   Bestanden met een andere eerste letter worden overgeslagen (met een waarschuwing).
 
   Een werk kan meerdere foto's hebben: dezelfde naam met een volgnummer aan het
@@ -15,7 +15,7 @@
   Informatie over een werk staat in een .yaml-bestand met de naam van het werk
   zonder nummer (bijvoorbeeld K_portret.yaml). Zie images/README.md.
 */}}
-{{ $albums := dict "k" "koppen" "p" "penningen" "b" "buste" "l" "lichamen" "h" "handen" }}
+{{ $albums := dict "k" "koppen" "p" "penningen" "b" "buste" "l" "lichamen" "h" "handen" "o" "overig" }}
 
 {{/* 1. Foto's per werk verzamelen */}}
 {{ $werken := newScratch }}
@@ -34,7 +34,7 @@
       {{ $key := printf "%s/%s" $album $base }}
       {{ $werken.Add $key (slice (dict "nummer" $nummer "naam" $name "foto" . "album" $album "base" $base)) }}
     {{ else }}
-      {{ warnf "images/%s: bestandsnaam begint niet met K, P, B, L of H; foto wordt overgeslagen" $name }}
+      {{ warnf "images/%s: bestandsnaam begint niet met K, P, B, L, H of O; foto wordt overgeslagen" $name }}
     {{ end }}
   {{ end }}
 {{ end }}
