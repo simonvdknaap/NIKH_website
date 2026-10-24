@@ -1,3 +1,5 @@
 # NIKH_website
 Website containing all works created by Herman Hopman
-test
+
+Bekijk de website via de onderstaande link:
+https://simonvdknaap.github.io/NIKH_website/
