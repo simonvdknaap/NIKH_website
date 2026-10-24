@@ -54,14 +54,14 @@ beschrijving: |
 - `techniek` en `materiaal` worden ook filters, net als tags: bovenaan elke
   categorie- en overzichtspagina staat één rij knoppen met alle tags,
   technieken en materialen om op te filteren, en elke techniek en elk materiaal krijgt
-  een eigen overzichtspagina (onder **Technieken** en **Materialen** in het
-  menu). Meerdere materialen schrijf je als lijst:
+  een eigen pagina, net als een tag. Alle tags, technieken en materialen
+  staan samen onder **Werk** in het menu. Meerdere materialen schrijf je als lijst:
   `materiaal: ["Brons", "Hardsteen"]` (in het formulier: gescheiden door
   komma's).
 - `tags` is een lijst, bijvoorbeeld de persoon die het werk voorstelt. Elke tag
   krijgt een eigen overzichtspagina met alle werken met die tag, uit alle
-  categorieën (bijvoorbeeld `/tags/moniek/`; alle tags staan onder **Tags** in
-  het menu). Op de pagina van een categorie kun je met knoppen boven de foto's
+  categorieën (bijvoorbeeld `/tags/moniek/`; alle tags staan onder **Werk** in het
+  menu). Op de pagina van een categorie kun je met knoppen boven de foto's
   filteren op tag. Schrijf een tag steeds op dezelfde manier: `Moniek` en
   `moniek` worden wel samengevoegd, maar `Monique` niet. Dat geldt ook voor
   technieken en materialen.

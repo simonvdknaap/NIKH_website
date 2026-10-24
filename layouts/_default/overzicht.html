@@ -1,9 +1,12 @@
-{{/* Overzicht van alle tags, technieken of materialen, elk met de foto van een van de werken */}}
-  <hgroup>
-    <h1>{{ .Title }}</h1>
-  </hgroup>
+{{/* Werk: alle tags, technieken en materialen samen, op alfabet */}}
+{{ define "main" }}
+  {{ partial "title.html" . }}
+  {{ $termen := slice }}
+  {{ range slice "tags" "technieken" "materialen" }}
+    {{ with site.GetPage (printf "/%s" .) }}{{ $termen = $termen | append .Pages }}{{ end }}
+  {{ end }}
   <section class="galleries">
-    {{ range .Pages.ByTitle }}
+    {{ range sort $termen "Title" }}
       {{ $term := . }}
       {{ $werken := where .Pages "Params.afbeelding" "!=" nil }}
       {{ with index (sort $werken "Params.afbeelding") 0 }}
@@ -23,3 +26,4 @@
       {{ end }}
     {{ end }}
   </section>
+{{ end }}

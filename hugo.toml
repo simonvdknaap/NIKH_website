@@ -19,10 +19,6 @@ theme = 'kaiser'
   # (via formsubmit.co, zie assets/js/custom.js)
   formulier_email = '4.tannest.coconut@icloud.com'
 
-[[menus.main]]
-  name = 'Tags'
-  pageRef = '/tags'
-  weight = 80
 
 # Filters op de albumpagina's; elke waarde krijgt een eigen overzichtspagina
 [taxonomies]
@@ -32,11 +28,6 @@ theme = 'kaiser'
   materiaal = 'materialen'
 
 [[menus.main]]
-  name = 'Technieken'
-  pageRef = '/technieken'
-  weight = 81
-
-[[menus.main]]
-  name = 'Materialen'
-  pageRef = '/materialen'
-  weight = 82
+  name = 'Werk'
+  pageRef = '/werk'
+  weight = 80

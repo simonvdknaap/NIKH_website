@@ -410,3 +410,58 @@ section.gallery {
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
+
+/* Menu: paneel aan de rechterkant, over de inhoud heen */
+body > menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  display: block;
+  width: 20rem;
+  max-width: 85vw;
+  margin: 0;
+  padding: 5rem 2rem 2rem;
+  overflow-y: auto;
+  background: var(--surface-1);
+  border-left: 1px solid var(--border);
+  box-shadow: -1rem 0 2rem -1.5rem rgba(0, 0, 0, 0.25);
+  font-weight: 400;
+  text-align: left;
+  transform: translateX(100%);
+  visibility: hidden;
+  transition:
+    transform 0.3s ease,
+    visibility 0s linear 0.3s;
+}
+
+body > menu.hidden {
+  display: block;
+}
+
+body > menu.open {
+  transform: none;
+  visibility: visible;
+  transition: transform 0.3s ease;
+}
+
+body > menu .menu-sluiten {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 3rem;
+  height: 3rem;
+  border: 0;
+  background: transparent;
+  color: var(--text-1);
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body > menu,
+  body > menu.open {
+    transition: none;
+  }
+}
