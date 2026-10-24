@@ -151,8 +151,10 @@ hgroup h1 {
   }
 }
 
-.home-caption h2 {
+/* Op de startpagina is alleen de h1 vet */
+main .home-caption h2 {
   font-size: 1rem;
+  font-weight: 400;
 }
 
 .home-caption p {
