@@ -695,7 +695,6 @@ main .werk-tegel .home-caption h2 {
   height: 0.875rem;
   border-radius: 50%;
   background: #a9dcb8;
-  box-shadow: 0 0 0 2px var(--surface-1);
 }
 
 .werk-afbeelding .te-koop-stip {
