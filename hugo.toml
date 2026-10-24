@@ -30,4 +30,4 @@ theme = 'kaiser'
 [[menus.main]]
   name = 'Werk'
   pageRef = '/werk'
-  weight = 80
+  weight = 10
