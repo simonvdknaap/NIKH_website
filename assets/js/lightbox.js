@@ -8,7 +8,7 @@ const gallery = document.getElementById("gallery");
 if (gallery) {
   const lightbox = new PhotoSwipeLightbox({
     gallery,
-    children: ".gallery-item",
+    children: ".gallery-item:not(.werk-link)",
     showHideAnimationType: "zoom",
     bgOpacity: 1,
     pswpModule: PhotoSwipe,

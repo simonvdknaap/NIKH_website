@@ -1,5 +1,6 @@
 ---
 title: Penningen
+layout: album
 weight: 2
 menus: "main"
 categories: ["penningen"]

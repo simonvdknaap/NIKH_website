@@ -1,0 +1,10 @@
+{{/* Album (Koppen, Penningen, ...): foto's uit images/, elk met een eigen werkpagina */}}
+{{ define "main" }}
+  {{ partial "title.html" . }}
+  {{ partial "gallery.html" . }}
+  {{ with .Content }}
+    <section class="prose">
+      {{ . }}
+    </section>
+  {{ end }}
+{{ end }}

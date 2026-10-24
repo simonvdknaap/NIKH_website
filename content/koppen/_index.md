@@ -1,5 +1,6 @@
 ---
 title: Koppen
+layout: album
 weight: 1
 menus: "main"
 categories: ["koppen"]
