@@ -492,9 +492,27 @@ body > header {
 
 .header-links {
   display: flex;
-  flex: none;
+  flex: 0 1 auto;
   align-items: center;
-  gap: 0.25rem;
+  gap: 1.25rem;
+  min-width: 0;
+}
+
+/* "Terug naar ..." naast het logo */
+.header-terug {
+  overflow: hidden;
+  color: var(--text-2);
+  font-size: 0.9375rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.header-terug:hover {
+  color: var(--text-1);
+}
+
+.header-logo {
+  flex: none;
 }
 
 .header-rechts {
