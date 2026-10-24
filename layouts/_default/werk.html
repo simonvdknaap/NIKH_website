@@ -2,13 +2,32 @@
 {{ define "main" }}
   {{ $album := .Parent }}
   <article class="werk">
-    {{ with .Resources.GetMatch .Params.afbeelding }}
-      {{ $full := .Filter (slice images.AutoOrient (images.Process "fit 1600x1600")) }}
-      {{ $display := .Filter (slice images.AutoOrient (images.Process "fit 1000x1000")) }}
-      <a class="werk-afbeelding" href="{{ $full.RelPermalink }}" title="Vergroot">
-        <img src="{{ $display.RelPermalink }}" width="{{ $display.Width }}" height="{{ $display.Height }}" alt="{{ $.Title }}" />
-      </a>
-    {{ end }}
+    {{/* Foto's van het werk: de hoofdfoto groot, bij meer foto's kleine foto's eronder om te wisselen */}}
+    <div class="werk-fotos">
+      {{ with .Resources.GetMatch .Params.afbeelding }}
+        {{ $full := .Filter (slice images.AutoOrient (images.Process "fit 1600x1600")) }}
+        {{ $display := .Filter (slice images.AutoOrient (images.Process "fit 1000x1000")) }}
+        <a class="werk-afbeelding" href="{{ $full.RelPermalink }}" title="Vergroot">
+          <img src="{{ $display.RelPermalink }}" width="{{ $display.Width }}" height="{{ $display.Height }}" alt="{{ $.Title }}" />
+        </a>
+      {{ end }}
+      {{ $namen := .Params.afbeeldingen | default (slice .Params.afbeelding) }}
+      {{ if gt (len $namen) 1 }}
+        <div class="werk-miniaturen" role="list" aria-label="Foto's van dit werk">
+          {{ range $i, $naam := $namen }}
+            {{ with $.Resources.GetMatch $naam }}
+              {{ $full := .Filter (slice images.AutoOrient (images.Process "fit 1600x1600")) }}
+              {{ $display := .Filter (slice images.AutoOrient (images.Process "fit 1000x1000")) }}
+              {{ $thumb := .Filter (slice images.AutoOrient (images.Process "fill 160x160 Center")) }}
+              <button type="button" role="listitem" aria-label="Foto {{ add $i 1 }}" aria-pressed="{{ eq $i 0 }}"
+                data-src="{{ $display.RelPermalink }}" data-width="{{ $display.Width }}" data-height="{{ $display.Height }}" data-full="{{ $full.RelPermalink }}">
+                <img src="{{ $thumb.RelPermalink }}" width="80" height="80" alt="" loading="lazy" />
+              </button>
+            {{ end }}
+          {{ end }}
+        </div>
+      {{ end }}
+    </div>
 
     <div class="werk-info">
       <h1>{{ .Title }}</h1>

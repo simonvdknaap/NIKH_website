@@ -61,6 +61,24 @@ if (uitgelicht) {
 }
 
 /*
+ * Werkpagina met meerdere foto's: klik op een kleine foto om hem groot te tonen.
+ */
+document.querySelectorAll(".werk-fotos").forEach((fotos) => {
+  const groot = fotos.querySelector(".werk-afbeelding");
+  const knoppen = fotos.querySelectorAll(".werk-miniaturen button");
+  knoppen.forEach((knop) =>
+    knop.addEventListener("click", () => {
+      const img = groot.querySelector("img");
+      img.src = knop.dataset.src;
+      img.width = knop.dataset.width;
+      img.height = knop.dataset.height;
+      groot.href = knop.dataset.full;
+      knoppen.forEach((k) => k.setAttribute("aria-pressed", String(k === knop)));
+    }),
+  );
+});
+
+/*
  * Beheermodus voor de werkpagina's.
  * Zet aan met ?beheer=1 achter een adres van de site, uit met ?beheer=0.
  * De keuze wordt in deze browser onthouden.

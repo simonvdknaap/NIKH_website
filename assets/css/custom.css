@@ -235,6 +235,39 @@ main .home-caption h2 {
   cursor: zoom-in;
 }
 
+/* Kleine foto's onder de hoofdfoto (werk met meerdere foto's) */
+.werk-miniaturen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.werk-miniaturen button {
+  padding: 0;
+  border: 1px solid transparent;
+  background: none;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.werk-miniaturen button:hover,
+.werk-miniaturen button[aria-pressed="true"] {
+  opacity: 1;
+}
+
+.werk-miniaturen button[aria-pressed="true"] {
+  border-color: var(--text-1);
+}
+
+.werk-miniaturen img {
+  display: block;
+  width: 4.5rem;
+  height: 4.5rem;
+  object-fit: cover;
+}
+
 .werk-afbeelding img {
   display: block;
   width: 100%;
