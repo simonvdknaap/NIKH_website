@@ -557,6 +557,13 @@ body > header {
  */
 .werk-mozaiek {
   padding: 0;
+  grid-auto-rows: 3.25rem;
+}
+
+@media (min-width: 900px) {
+  .werk-mozaiek {
+    grid-auto-rows: 1.75rem;
+  }
 }
 
 /* Telefoon: patroon van drie (breed, dan twee smalle naast elkaar) */
