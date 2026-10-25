@@ -49,6 +49,10 @@
             <img class="hover-foto" src="{{ $t2.RelPermalink }}" alt="" loading="lazy" />
           {{ end }}{{ end }}
         </figure>
+        {{/* Titel als label op de foto, als het album params.titels: true heeft (bijv. Penningen) */}}
+        {{ if and $werk $.Params.titels }}
+          <div class="home-caption"><h2>{{ $werk.Title }}</h2></div>
+        {{ end }}
         <meta itemprop="contentUrl" content="{{ if $publishResources }}{{ $image.RelPermalink }}{{ else }}{{ $full.RelPermalink }}{{ end }}" />
         {{ with site.Params.Author }}
           <span itemprop="creator" itemtype="https://schema.org/Person" itemscope>

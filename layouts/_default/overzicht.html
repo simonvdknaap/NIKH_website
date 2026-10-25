@@ -1,39 +1,45 @@
 {{/*
-  Werk: alles op één pagina, per groep: categorieën, personen (tags),
-  technieken en materialen, elk als rijen foto's in hun eigen verhouding.
+  Werk: alles op één pagina, per groep: categorieën, materialen, personen
+  (tags) en technieken, elk als rijen foto's in hun eigen verhouding.
   Welke foto's een tegel toont kies je met omslag: true (mozaiek-tegel.html).
 */}}
 {{ define "main" }}
   {{ partial "title.html" . }}
 
-  {{/* Categorieën: de albums */}}
-  {{ with where site.Home.Pages "Params.private" "ne" true }}
-    <section class="werk-groep">
-      <h2>Categorieën</h2>
-      <div class="werk-rijen">
-        {{ range . }}
-          {{ $werken := where .Pages "Layout" "werk" }}
-          {{ if $werken }}{{ partial "mozaiek-tegel.html" (dict "pagina" . "werken" $werken) }}{{ end }}
-        {{ end }}
-      </div>
-    </section>
+  {{/*
+    Volgorde: categorieën, materialen, personen, technieken. Binnen elke groep
+    op aantal werken (meeste eerst; bij gelijk aantal op naam).
+  */}}
+  {{ $groepen := slice }}
+  {{ $albums := slice }}
+  {{ range where site.Home.Pages "Params.private" "ne" true }}
+    {{ $werken := where .Pages "Layout" "werk" }}
+    {{ if $werken }}{{ $albums = $albums | append (dict "pagina" . "werken" $werken "aantal" (len $werken) "naam" .Title) }}{{ end }}
+  {{ end }}
+  {{ $groepen = $groepen | append (dict "titel" "Categorieën" "tegels" $albums) }}
+  {{ range slice (slice "materialen" "Materialen") (slice "tags" "Personen") (slice "technieken" "Technieken") }}
+    {{ $titel := index . 1 }}
+    {{ $tegels := slice }}
+    {{ with site.GetPage (printf "/%s" (index . 0)) }}
+      {{ range .Pages }}
+        {{ $werken := where .Pages "Params.afbeelding" "!=" nil }}
+        {{ if $werken }}{{ $tegels = $tegels | append (dict "pagina" . "werken" $werken "aantal" (len $werken) "naam" .Title) }}{{ end }}
+      {{ end }}
+    {{ end }}
+    {{ $groepen = $groepen | append (dict "titel" $titel "tegels" $tegels) }}
   {{ end }}
 
-  {{/* Personen, technieken, materialen */}}
-  {{ range slice (slice "tags" "Personen") (slice "technieken" "Technieken") (slice "materialen" "Materialen") }}
-    {{ $titel := index . 1 }}
-    {{ with site.GetPage (printf "/%s" (index . 0)) }}
-      {{ with .Pages.ByTitle }}
-        <section class="werk-groep">
-          <h2>{{ $titel }}</h2>
-          <div class="werk-rijen">
-            {{ range . }}
-              {{ $werken := where .Pages "Params.afbeelding" "!=" nil }}
-              {{ if $werken }}{{ partial "mozaiek-tegel.html" (dict "pagina" . "werken" $werken) }}{{ end }}
-            {{ end }}
-          </div>
-        </section>
-      {{ end }}
+  {{ range $groepen }}
+    {{ $titel := .titel }}
+    {{ with .tegels }}
+      <section class="werk-groep">
+        <h2>{{ $titel }}</h2>
+        <div class="werk-rijen">
+          {{ range sort (sort . "naam") "aantal" "desc" }}
+            {{ partial "mozaiek-tegel.html" (dict "pagina" .pagina "werken" .werken) }}
+          {{ end }}
+        </div>
+      </section>
     {{ end }}
   {{ end }}
 {{ end }}
