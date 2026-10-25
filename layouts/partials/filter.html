@@ -1,6 +1,8 @@
 {{/*
   Eén lange rij filterknoppen: alle tags, technieken en materialen van de
-  gegeven werken, op alfabet. Het filteren gebeurt in assets/js/custom.js.
+  gegeven werken, op alfabet. Personen met maar één werk op de hele site
+  worden overgeslagen (op de Werk-pagina staan ze wel). Het filteren gebeurt
+  in assets/js/custom.js.
   Context: dict "werken" (werkpagina's) en optioneel "huidig" (de tag-,
   techniek- of materiaalpagina zelf; die waarde wordt niet getoond).
 */}}
@@ -9,7 +11,9 @@
 {{ range $werk := .werken }}
   {{ range $tax := slice "tags" "technieken" "materialen" }}
     {{ range $werk.GetTerms $tax }}
-      {{ if not (and $huidig (eq .RelPermalink $huidig.RelPermalink)) }}
+      {{/* Personen die maar in één werk voorkomen (op de hele site) krijgen geen filterknop */}}
+      {{ $zelden := and (eq $tax "tags") (lt (len (where .Pages "Params.afbeelding" "!=" nil)) 2) }}
+      {{ if and (not $zelden) (not (and $huidig (eq .RelPermalink $huidig.RelPermalink))) }}
         {{ $key := printf "%s|%s" (lower .LinkTitle) $tax }}
         {{ $count := 1 }}
         {{ with index $opties $key }}{{ $count = add .count 1 }}{{ end }}
