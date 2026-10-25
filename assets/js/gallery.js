@@ -6,7 +6,61 @@ import * as params from "@params";
  * rij krijgen dezelfde hoogte en vullen samen de breedte. Gebruikt voor de
  * fotogalerij van albums (#gallery) en voor de Werk-pagina (.werk-rijen).
  */
-function deelIn(container, { itemSelector, rowHeight, spacing, imgHeight, onLayout, labelsOnder }) {
+/*
+ * Rijen van 2 of 3 foto's die precies de breedte vullen (voor categorieën met
+ * weinig werken op groot scherm). De verdeling in rijen van 2 en 3 wordt zo
+ * gekozen dat de rijen zo gelijk mogelijk van hoogte zijn. Alleen de laatste
+ * rij mag minder foto's hebben; die wordt niet hoger dan de andere rijen en
+ * laat dan rechts ruimte over.
+ */
+function rijenVanTweeOfDrie(ratios, { rowWidth, spacing }) {
+  const n = ratios.length;
+  const hoogte = (van, tot) => (rowWidth - (tot - van - 1) * spacing) / ratios.slice(van, tot).reduce((a, b) => a + b, 0);
+  const sorted = [...ratios].sort((a, b) => a - b);
+  const mediaan = sorted[Math.floor(n / 2)] || 1;
+  const doel = rowWidth / (2.5 * mediaan);
+  const afwijking = (h) => Math.log(h / doel) ** 2;
+
+  // kosten[i] = beste verdeling van foto i tot het eind
+  const kosten = new Array(n + 1).fill(Infinity);
+  const stap = new Array(n + 1).fill(0);
+  kosten[n] = 0;
+  for (let i = n - 1; i >= 0; i--) {
+    for (const k of [2, 3, 1]) {
+      if (i + k > n) continue;
+      const laatste = i + k === n;
+      // Rijen van 1 alleen als laatste rij (of als er maar 1 foto is)
+      if (k === 1 && !laatste) continue;
+      const h = hoogte(i, i + k);
+      // De laatste rij wordt niet hoger dan het doel: dan blijft er rechts ruimte
+      const c = laatste && h > doel ? 0.15 * (h / doel - 1) : afwijking(h);
+      if (c + kosten[i + k] < kosten[i]) {
+        kosten[i] = c + kosten[i + k];
+        stap[i] = k;
+      }
+    }
+  }
+
+  const boxes = [];
+  let top = 0;
+  let vorige = doel;
+  for (let i = 0; i < n; i += stap[i]) {
+    const k = stap[i];
+    let h = hoogte(i, i + k);
+    if (i + k === n && h > vorige) h = vorige;
+    let left = 0;
+    for (let j = i; j < i + k; j++) {
+      const width = ratios[j] * h;
+      boxes.push({ width, height: h, top, left });
+      left += width + spacing;
+    }
+    vorige = h;
+    top += h + spacing;
+  }
+  return { boxes, containerHeight: Math.max(0, top - spacing) };
+}
+
+function deelIn(container, { itemSelector, rowHeight, spacing, imgHeight, onLayout, labelsOnder, kleineRijen }) {
   let containerWidth = 0;
   const items = container.querySelectorAll(itemSelector);
 
@@ -25,7 +79,7 @@ function deelIn(container, { itemSelector, rowHeight, spacing, imgHeight, onLayo
     // Alleen zichtbare foto's indelen; verborgen foto's (filter) overslaan
     const visible = Array.from(items).map((item, i) => [item, aspectRatios[i]]).filter(([item]) => !item.hidden);
 
-    const layout = justifiedLayout(
+    const layout = (kleineRijen && kleineRijen() ? rijenVanTweeOfDrie : justifiedLayout)(
       visible.map(([, ratio]) => ratio),
       {
         rowWidth: containerWidth,
@@ -85,13 +139,17 @@ function deelIn(container, { itemSelector, rowHeight, spacing, imgHeight, onLayo
 }
 
 const gallery = document.getElementById("gallery");
+const groot = window.matchMedia("(min-width: 900px)");
 
 if (gallery) {
+  // Categorie met minder dan 24 werken: op groot scherm rijen van 2 of 3 foto's
+  const weinig = gallery.hasAttribute("data-categorie") && gallery.querySelectorAll(".gallery-item").length < 24;
   deelIn(gallery, {
     itemSelector: ".gallery-item",
     rowHeight: () => params.targetRowHeight || 288,
     spacing: () => (Number.isInteger(params.boxSpacing) ? params.boxSpacing : 8),
     imgHeight: "auto",
+    kleineRijen: () => weinig && groot.matches,
   });
 }
 
@@ -100,7 +158,6 @@ if (gallery) {
  * klein. Op kleinere schermen: als een naam in een label over twee regels
  * loopt, staan de labels van alle foto's onder de foto in plaats van erin.
  */
-const groot = window.matchMedia("(min-width: 900px)");
 const werkRijen = Array.from(document.querySelectorAll(".werk-rijen"));
 
 /*
