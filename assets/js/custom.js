@@ -286,23 +286,26 @@ function maakYaml(form) {
 if (beheerModus()) {
   document.querySelectorAll(".werk-beheer").forEach((el) => (el.hidden = false));
 
-  /* Terug van formsubmit.co na het versturen (?verstuurd=1): het formulier blijft staan */
-  if (new URLSearchParams(window.location.search).get("verstuurd") === "1") {
-    document.querySelectorAll(".werk-form-verstuurd").forEach((el) => (el.hidden = false));
-  }
-
   /*
-   * Bij Versturen: maak het .yaml-bestand, voeg het toe als bijlage en verstuur
-   * het formulier naar formsubmit.co, dat alles naar het e-mailadres stuurt.
+   * Bij Versturen: maak het .yaml-bestand en stuur het formulier, met dat
+   * bestand als bijlage, op de achtergrond naar formsubmit.co, dat alles naar
+   * het e-mailadres stuurt; je blijft op de pagina en het formulier blijft staan.
    * Heeft het werk nog geen .yaml-bestand (data-repo), dan opent ook GitHub's
    * "nieuw bestand"-pagina met de naam en inhoud al ingevuld.
    */
   document.querySelectorAll(".werk-form").forEach((form) => {
-    form.addEventListener("submit", (event) => {
+    const status = form.querySelector(".werk-form-status");
+    const button = form.querySelector("button[type=submit]");
+    const zetStatus = (tekst, isFout = false) => {
+      status.textContent = tekst;
+      status.classList.toggle("fout", isFout);
+      status.hidden = false;
+    };
+
+    form.addEventListener("submit", async (event) => {
       event.preventDefault();
       const { repo, branch, bestand } = form.dataset;
       const yaml = maakYaml(form);
-      const pagina = window.location.origin + window.location.pathname;
 
       if (repo) {
         const url = new URL(`https://github.com/${repo}/new/${branch}/images`);
@@ -311,20 +314,29 @@ if (beheerModus()) {
         window.open(url, "_blank", "noopener");
       }
 
-      form.elements.yaml.value = yaml;
-      form.elements.Pagina.value = pagina;
-      form.elements._next.value = `${pagina}?verstuurd=1`;
-      try {
-        const bijlage = new DataTransfer();
-        bijlage.items.add(new File([yaml], `${bestand}.yaml`, { type: "text/plain" }));
-        form.elements.attachment.files = bijlage.files;
-      } catch (error) {
-        // Oude browser: geen bijlage, de inhoud staat dan alleen in het veld "yaml".
-        console.error(error);
-      }
+      const data = new FormData(form);
+      data.set("Pagina", window.location.origin + window.location.pathname);
+      data.set("yaml", yaml);
+      data.set("attachment", new File([yaml], `${bestand}.yaml`, { type: "text/plain" }));
 
-      form.querySelector("button").disabled = true;
-      form.submit();
+      button.disabled = true;
+      zetStatus("Bezig met versturen…");
+      try {
+        const response = await fetch(form.action.replace("formsubmit.co/", "formsubmit.co/ajax/"), {
+          method: "POST",
+          headers: { Accept: "application/json" },
+          body: data,
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || String(result.success) !== "true") {
+          throw new Error(result.message || `HTTP ${response.status}`);
+        }
+        zetStatus("Verstuurd, dank je wel! Het formulier blijft staan tot alle gegevens op de website staan.");
+      } catch (error) {
+        console.error(error);
+        zetStatus(`Versturen is niet gelukt: ${error.message}`, true);
+      }
+      button.disabled = false;
     });
   });
 }
