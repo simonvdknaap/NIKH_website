@@ -67,6 +67,35 @@ document.querySelectorAll(".werk-fotos").forEach((fotos) => {
 });
 
 /*
+ * Startpagina: elke tegel zo hoog als zijn foto, zodat niets wordt bijgesneden.
+ * De breedte van een tegel volgt uit het mozaïek; de hoogte = breedte gedeeld
+ * door de verhouding van de foto, omgerekend naar rijen van 4px.
+ */
+const homeGrid = document.querySelector(".home-grid");
+
+if (homeGrid) {
+  const RIJ = 4;
+  const deelHomeIn = () => {
+    homeGrid.classList.add("uitgelijnd");
+    homeGrid.querySelectorAll(":scope > .home-item").forEach((tegel) => {
+      const img = Array.from(tegel.querySelectorAll("figure > img:not(.hover-foto)")).find((i) => !i.closest("[hidden]"));
+      if (!img) return;
+      const verhouding = parseFloat(img.getAttribute("width")) / parseFloat(img.getAttribute("height"));
+      const marge = parseFloat(getComputedStyle(tegel).marginBottom) || 0;
+      const hoogte = tegel.getBoundingClientRect().width / verhouding;
+      tegel.style.gridRow = `span ${Math.ceil((hoogte + marge) / RIJ)}`;
+    });
+  };
+  deelHomeIn();
+  let breedte = window.innerWidth;
+  window.addEventListener("resize", () => {
+    if (window.innerWidth === breedte) return;
+    breedte = window.innerWidth;
+    deelHomeIn();
+  });
+}
+
+/*
  * Categorie-, persoon-, techniek- en materiaalpagina's (o.a. via het
  * uitgelichte blok op de startpagina): "Terug naar Home" als je van de
  * startpagina kwam, anders "Terug naar Werk". Bij terugkomen van een werk
