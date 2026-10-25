@@ -807,33 +807,19 @@ p.werk-beheer {
 }
 
 /*
- * Startpagina: foto's nooit bijgesneden. assets/js/custom.js maakt elke tegel
- * precies zo hoog als zijn foto (in stapjes van 4px); de breedtes blijven die
- * van het mozaïek. Waar een staande en een liggende foto naast elkaar staan,
- * kan een gat ontstaan. Zonder JavaScript blijft het gewone mozaïek staan.
+ * Startpagina: mozaïek zonder bijgesneden foto's. assets/js/custom.js
+ * berekent de plek en maat van elke tegel (zie daar); de foto vult de tegel
+ * precies omdat de tegel dezelfde verhouding heeft.
  */
-.home-grid.uitgelijnd {
-  grid-auto-rows: 4px;
-  row-gap: 0;
+.home-grid.gelegd {
+  position: relative;
+  display: block;
 }
 
-.home-grid.uitgelijnd > .home-item {
-  align-self: start;
-  margin-bottom: 0.5rem;
+.home-grid.gelegd > .home-item {
+  margin: 0;
 }
 
-@media (min-width: 900px) {
-  .home-grid.uitgelijnd > .home-item {
-    margin-bottom: 0.75rem;
-  }
-}
-
-.home-grid.uitgelijnd .home-item figure,
-.home-grid.uitgelijnd .home-featured > a {
-  height: auto;
-}
-
-.home-grid.uitgelijnd .home-item img {
-  height: auto;
-  object-fit: fill;
+.home-grid.gelegd .home-featured > a {
+  height: 100%;
 }

@@ -67,25 +67,133 @@ document.querySelectorAll(".werk-fotos").forEach((fotos) => {
 });
 
 /*
- * Startpagina: elke tegel zo hoog als zijn foto, zodat niets wordt bijgesneden.
- * De breedte van een tegel volgt uit het mozaïek; de hoogte = breedte gedeeld
- * door de verhouding van de foto, omgerekend naar rijen van 4px.
+ * Startpagina: mozaïek zonder bijgesneden foto's en met rechte randen.
+ * - Groot scherm: links de uitgelichte foto, rechts 1 tot 3 rijen categorieën
+ *   die samen precies even hoog zijn als die foto.
+ * - Daaronder (en op de telefoon na de uitgelichte foto) rijen die precies van
+ *   rand tot rand lopen; alleen de laatste rij mag korter zijn.
+ * Elke foto houdt zijn eigen verhouding; de maten worden zo berekend dat de
+ * randen kloppen. Zonder JavaScript blijft het gewone (bijgesneden) mozaïek.
  */
 const homeGrid = document.querySelector(".home-grid");
 
 if (homeGrid) {
-  const RIJ = 4;
-  const deelHomeIn = () => {
-    homeGrid.classList.add("uitgelijnd");
-    homeGrid.querySelectorAll(":scope > .home-item").forEach((tegel) => {
-      const img = Array.from(tegel.querySelectorAll("figure > img:not(.hover-foto)")).find((i) => !i.closest("[hidden]"));
-      if (!img) return;
-      const verhouding = parseFloat(img.getAttribute("width")) / parseFloat(img.getAttribute("height"));
-      const marge = parseFloat(getComputedStyle(tegel).marginBottom) || 0;
-      const hoogte = tegel.getBoundingClientRect().width / verhouding;
-      tegel.style.gridRow = `span ${Math.ceil((hoogte + marge) / RIJ)}`;
-    });
+  const groot = window.matchMedia("(min-width: 900px)");
+
+  const verhoudingVan = (tegel) => {
+    const img = Array.from(tegel.querySelectorAll("figure > img:not(.hover-foto)")).find((i) => !i.closest("[hidden]"));
+    return img ? parseFloat(img.getAttribute("width")) / parseFloat(img.getAttribute("height")) : 1;
   };
+
+  // Rijen die de breedte vullen; doelhoogte per rij, laatste rij mag korter
+  const rijen = (items, x0, y0, breedte, doel, gap, plaats) => {
+    let y = y0;
+    let i = 0;
+    while (i < items.length) {
+      let som = 0;
+      let j = i;
+      let hoogte = Infinity;
+      // voeg tegels toe zolang de rij daardoor dichter bij de doelhoogte komt
+      while (j < items.length) {
+        const nieuweSom = som + items[j].r;
+        const nieuweHoogte = (breedte - gap * (j - i)) / nieuweSom;
+        if (j > i && Math.abs(nieuweHoogte - doel) > Math.abs(hoogte - doel)) break;
+        som = nieuweSom;
+        hoogte = nieuweHoogte;
+        j++;
+      }
+      const laatste = j >= items.length;
+      if (laatste && hoogte > doel * 1.15) hoogte = doel; // korte laatste rij: gat aan het eind
+      let x = x0;
+      for (let k = i; k < j; k++) {
+        const w = k === j - 1 && !(laatste && hoogte === doel) ? x0 + breedte - x : items[k].r * hoogte;
+        plaats(items[k].tegel, x, y, w, hoogte);
+        x += w + gap;
+      }
+      y += hoogte + gap;
+      i = j;
+    }
+    return y;
+  };
+
+  const deelHomeIn = () => {
+    const cs = getComputedStyle(homeGrid);
+    const links = parseFloat(cs.paddingLeft);
+    const W = homeGrid.clientWidth - links - parseFloat(cs.paddingRight);
+    const gap = groot.matches ? 12 : 8;
+    const tegels = Array.from(homeGrid.querySelectorAll(":scope > .home-item"));
+    const items = tegels.map((tegel) => ({ tegel, r: verhoudingVan(tegel) }));
+    const plaats = (tegel, x, y, w, h) => {
+      Object.assign(tegel.style, { position: "absolute", left: links + x + "px", top: y + "px", width: w + "px", height: h + "px" });
+    };
+    homeGrid.classList.add("gelegd");
+
+    let y = 0;
+    let rest = items;
+    const uitgelicht = items[0] && items[0].tegel.classList.contains("home-featured") ? items[0] : null;
+
+    if (uitgelicht && groot.matches && items.length >= 2) {
+      // Uitgelicht links; rechts 1 tot 3 rijen (elk 1 tot 3 tegels). Kies de
+      // verdeling waarbij de uitgelichte foto ongeveer 58% van de breedte krijgt.
+      const anderen = items.slice(1);
+      const verdelingen = [];
+      const maak = (gekozen, gebruikt) => {
+        if (gekozen.length) verdelingen.push(gekozen);
+        if (gekozen.length === 3) return;
+        for (let n = 1; n <= 3 && gebruikt + n <= anderen.length; n++) maak([...gekozen, n], gebruikt + n);
+      };
+      maak([], 0);
+      let beste = null;
+      for (const verdeling of verdelingen) {
+        let start = 0;
+        let a = 0;
+        let c = 0;
+        for (const n of verdeling) {
+          const som = anderen.slice(start, start + n).reduce((t, it) => t + it.r, 0);
+          a += 1 / som;
+          c += (gap * (n - 1)) / som;
+          start += n;
+        }
+        // breedte uitgelicht (wF) zodat de rijen samen even hoog zijn als de foto
+        const wF = ((W - gap) * a - c + gap * (verdeling.length - 1)) / (a + 1 / uitgelicht.r);
+        const score = Math.abs(wF / W - 0.58);
+        if (wF > W * 0.35 && wF < W * 0.75 && (!beste || score < beste.score)) beste = { verdeling, wF, score };
+      }
+      if (beste) {
+        const H = beste.wF / uitgelicht.r;
+        plaats(uitgelicht.tegel, 0, 0, beste.wF, H);
+        const R = W - beste.wF - gap;
+        const rij = (deel, ry) => {
+          const som = deel.reduce((a, b) => a + b.r, 0);
+          const h = (R - gap * (deel.length - 1)) / som;
+          let x = beste.wF + gap;
+          deel.forEach((it, k) => {
+            const w = k === deel.length - 1 ? W - x : it.r * h;
+            plaats(it.tegel, x, ry, w, h);
+            x += w + gap;
+          });
+          return h;
+        };
+        let ry = 0;
+        let start = 0;
+        for (const n of beste.verdeling) {
+          ry += rij(anderen.slice(start, start + n), ry) + gap;
+          start += n;
+        }
+        y = H + gap;
+        rest = anderen.slice(start);
+      }
+    }
+    if (rest === items && uitgelicht) {
+      // Telefoon (of te weinig tegels): uitgelicht over de volle breedte
+      plaats(uitgelicht.tegel, 0, 0, W, W / uitgelicht.r);
+      y = W / uitgelicht.r + gap;
+      rest = items.slice(1);
+    }
+    y = rijen(rest, 0, y, W, groot.matches ? 300 : 150, gap, plaats);
+    homeGrid.style.height = Math.max(0, y - gap) + "px";
+  };
+
   deelHomeIn();
   let breedte = window.innerWidth;
   window.addEventListener("resize", () => {
