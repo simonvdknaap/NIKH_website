@@ -71,6 +71,7 @@ techniek: "Gietwerk (verloren was)"
 materiaal: "Brons"
 afmetingen: "32 × 20 × 24 cm"
 beschikbaar: true
+uitgelicht: 1
 tags: ["Cleo", "Anneke"]
 beschrijving: |
   Vrije tekst over het werk. Je kunt **vet** en *cursief* gebruiken,
@@ -91,6 +92,10 @@ beschrijving: |
   technieken en materialen staan onder **Werk** in het menu. Meerdere materialen schrijf je als lijst:
   `materiaal: ["Brons", "Hout"]` (in het formulier: gescheiden door
   komma's).
+- `uitgelicht: 1` t/m `uitgelicht: 5` zet het werk op de startpagina. De
+  startpagina toont altijd 5 werken; het getal is de plek (1 = de grote tegel
+  linksboven). Geef elk getal maar aan één werk. Zijn er minder dan 5 werken
+  uitgelicht, dan vult de site de rest aan met een werk uit elke categorie.
 - `tags` is een lijst van **personen** die het werk voorstelt (op de website
   heet dit *Personen*). Elke tag
   krijgt een eigen overzichtspagina met alle werken met die tag, uit alle
@@ -99,8 +104,8 @@ beschrijving: |
   filteren op tag. Schrijf een tag steeds op dezelfde manier: `Cleo` en
   `cleo` worden wel samengevoegd, maar `Clio` niet. Dat geldt ook voor
   technieken en materialen.
-- Op de startpagina wordt elke dag een andere tag uitgelicht (het grote blok),
-  met de foto van het eerste werk met die tag.
+- Op de Werk-pagina toont elke tegel (categorie, persoon, techniek,
+  materiaal) elke dag een andere foto uit die groep.
 - Zonder `titel` wordt de bestandsnaam de titel: `K_portret-oude-man.jpg`
   wordt "Portret oude man".
 - Zonder `.yaml`-bestand krijgt de foto ook een pagina, alleen met de titel

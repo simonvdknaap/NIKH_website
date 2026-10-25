@@ -1,16 +1,21 @@
 {{/*
-  Eén tegel op de Werk-pagina: de foto in zijn eigen verhouding (niet
+  Eén tegel op de Werk-pagina: een foto in zijn eigen verhouding (niet
   bijgesneden), met de naam en het aantal werken als label linksonder.
-  Context: dict "pagina" (waar de tegel naartoe linkt), "afbeelding" (resource)
-  en "aantal" (aantal werken).
+  Context: dict "pagina" (waar de tegel naartoe linkt), "fotos" (de hoofdfoto's
+  van de werken in deze groep) en "aantal" (aantal werken).
+  Elke dag toont de tegel een andere foto uit "fotos" (assets/js/gallery.js);
+  zonder JavaScript de eerste.
 */}}
-{{ with .afbeelding }}
-  {{ $img := .Filter (slice images.AutoOrient (images.Process "fit 900x900")) }}
-  {{ $color := index $img.Colors 0 | default "transparent" }}
-  {{ $r := div (float $img.Width) $img.Height }}
-  <a class="werk-tegel" href="{{ $.pagina.RelPermalink }}" style="--r: {{ printf "%.4f" $r }}">
-    <figure style="background-color: {{ $color }}">
-      <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ $.pagina.Title }}" loading="lazy" />
+{{ $opties := slice }}
+{{ range .fotos }}
+  {{ $img := .Filter (slice images.AutoOrient (images.Process "fit 600x600")) }}
+  {{ $opties = $opties | append (dict "s" $img.RelPermalink "w" $img.Width "h" $img.Height "c" (index $img.Colors 0 | default "transparent")) }}
+{{ end }}
+{{ with index $opties 0 }}
+  {{ $r := div (float .w) .h }}
+  <a class="werk-tegel" href="{{ $.pagina.RelPermalink }}" style="--r: {{ printf "%.4f" $r }}"{{ if gt (len $opties) 1 }} data-opties="{{ $opties | jsonify }}"{{ end }}>
+    <figure style="background-color: {{ .c }}">
+      <img src="{{ .s }}" width="{{ .w }}" height="{{ .h }}" alt="{{ $.pagina.Title }}" loading="lazy" />
     </figure>
     <div class="home-caption">
       <h2>{{ $.pagina.Title }}</h2>

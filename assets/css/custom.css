@@ -390,6 +390,7 @@ main .home-caption h2 {
 }
 
 .werk-form input,
+.werk-form select,
 .werk-form textarea {
   width: 100%;
   padding: 0.6rem 0.75rem;

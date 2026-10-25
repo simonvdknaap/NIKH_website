@@ -102,6 +102,29 @@ if (gallery) {
  */
 const groot = window.matchMedia("(min-width: 900px)");
 const werkRijen = Array.from(document.querySelectorAll(".werk-rijen"));
+
+/*
+ * Elke tegel toont elke dag een andere foto uit zijn groep (data-opties). De
+ * keuze verschilt per tegel, zodat niet alle tegels tegelijk "doorschuiven".
+ * Dit gebeurt vóór het indelen, want de verhouding van de foto telt mee.
+ */
+const dag = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000);
+document.querySelectorAll(".werk-tegel[data-opties]").forEach((tegel) => {
+  let opties;
+  try {
+    opties = JSON.parse(tegel.dataset.opties);
+  } catch {
+    return;
+  }
+  const verschuiving = Array.from(tegel.getAttribute("href")).reduce((som, teken) => som + teken.charCodeAt(0), 0);
+  const keuze = opties[(dag + verschuiving) % opties.length];
+  const img = tegel.querySelector("img");
+  img.src = keuze.s;
+  img.setAttribute("width", keuze.w);
+  img.setAttribute("height", keuze.h);
+  tegel.querySelector("figure").style.backgroundColor = keuze.c;
+  tegel.style.setProperty("--r", keuze.w / keuze.h);
+});
 let labelsOnder = false;
 
 const werkUpdates = werkRijen.map((container) =>
