@@ -809,7 +809,8 @@ p.werk-beheer {
   object-fit: cover;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.35s ease;
+  /* Terug naar de eerste foto: iets sneller dan het wisselen */
+  transition: opacity 0.5s ease-in-out;
 }
 
 .hover-foto[hidden] {
@@ -839,10 +840,26 @@ p.werk-beheer {
   transform: none;
 }
 
+/*
+ * Rustig wisselen: pas na een korte pauze op de foto (niet bij er langs
+ * bewegen), een langzame overgang, en de eerste foto vervaagt een beetje mee.
+ */
+.gallery-item figure > img:not(.hover-foto),
+.werk-tegel figure > img:not(.hover-foto) {
+  transition: transform 0.6s ease, opacity 0.5s ease-in-out;
+}
+
 @media (hover: hover) {
   a:hover .hover-foto,
   a:focus-visible .hover-foto {
     opacity: 1;
+    transition: opacity 0.7s ease-in-out 0.15s;
+  }
+
+  a:has(.hover-foto:not([hidden])):hover figure > img:not(.hover-foto),
+  a:has(.hover-foto:not([hidden])):focus-visible figure > img:not(.hover-foto) {
+    opacity: 0.6;
+    transition: transform 0.6s ease, opacity 0.7s ease-in-out 0.15s;
   }
 }
 
