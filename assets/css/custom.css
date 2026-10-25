@@ -696,7 +696,8 @@ body > header {
 }
 
 /* Label: compacter dan op de startpagina; lange namen lopen door op een volgende regel */
-.werk-tegel .home-caption {
+.werk-tegel .home-caption,
+.gallery-item .home-caption {
   flex-wrap: wrap;
   gap: 0 0.5rem;
   max-width: 100%;
@@ -704,7 +705,8 @@ body > header {
   white-space: normal;
 }
 
-main .werk-tegel .home-caption h2 {
+main .werk-tegel .home-caption h2,
+main .gallery-item .home-caption h2 {
   font-size: 0.875rem;
   line-height: 1.3;
 }
