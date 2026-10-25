@@ -129,18 +129,23 @@ Je kunt de gegevens ook op de website zelf invullen:
    <https://simonvdknaap.github.io/NIKH_website/?beheer=1>. Deze browser
    onthoudt dat je in beheermodus bent (uitzetten: `?beheer=0`). Gewone
    bezoekers zien het formulier niet.
-2. Open een werk zonder gegevens: naast de foto staat een formulier.
-3. Vul de velden in en klik op **Opslaan**. GitHub opent met het
-   `.yaml`-bestand (met de naam van het werk) al ingevuld; klik daar op
+2. Open een werk waarvan nog niet alle gegevens bekend zijn: naast de foto
+   staat een formulier met de bekende gegevens al ingevuld. Het formulier
+   blijft staan tot alle velden zijn ingevuld (de vinkjes tellen niet mee).
+3. Vul de velden aan en klik op **Versturen**. De gegevens gaan per e-mail
+   naar het adres uit `hugo.toml` (`formulier_email`, via formsubmit.co), met
+   het `.yaml`-bestand als bijlage. Heeft het werk nog geen `.yaml`-bestand,
+   dan opent ook GitHub met dat bestand al ingevuld; klik daar op
    **Commit changes**.
-4. Na een paar minuten staat de informatie op de website.
+4. Zet een gemailde bijlage in deze map (vervang het oude bestand); na een
+   paar minuten staat de informatie op de website.
 
-Bij een werk dat al gegevens heeft, staat in beheermodus een knop
+Bij een werk dat al gegevens heeft, staat in beheermodus ook een knop
 **Gegevens bewerken op GitHub**.
 
-Opslaan kan alleen met een GitHub-account dat schrijfrechten heeft op deze
-repository. Het formulier slaat op in de branch uit `hugo.toml`
-(`github_branch`, standaard `main`).
+Opslaan via GitHub kan alleen met een GitHub-account dat schrijfrechten heeft
+op deze repository, in de branch uit `hugo.toml` (`github_branch`, standaard
+`main`).
 
 De verdeling en de pagina's worden gemaakt in `content/_content.gotmpl`;
 de opmaak van de pagina staat in `layouts/_default/werk.html`.
