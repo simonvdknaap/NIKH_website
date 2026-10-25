@@ -18,7 +18,7 @@
     {{ if $werken }}{{ $albums = $albums | append (dict "pagina" . "werken" $werken "aantal" (len $werken) "naam" .Title "laatst" (eq .Section "overig")) }}{{ end }}
   {{ end }}
   {{ $groepen = $groepen | append (dict "titel" "Categorieën" "tegels" $albums) }}
-  {{ range slice (slice "materialen" "Materialen") (slice "technieken" "Technieken") (slice "tags" "Personen") }}
+  {{ range slice (slice "materialen" "Materialen") (slice "technieken" "Technieken") (slice "tags" "Modellen") }}
     {{ $titel := index . 1 }}
     {{ $tegels := slice }}
     {{ with site.GetPage (printf "/%s" (index . 0)) }}
