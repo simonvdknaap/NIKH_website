@@ -122,12 +122,10 @@
             Vul de velden aan en klik op <em>Versturen</em>: de gegevens worden met het bestand
             <code>images/{{ $p.bestand }}.yaml</code> als bijlage per e-mail verstuurd{{ if and $repo (not $p.heeft_info) }}
             en GitHub opent met dat bestand klaar om op te slaan{{ end }}.</p>
-          <p class="werk-form-verstuurd" hidden>Verstuurd, dank je wel! Het formulier blijft staan tot alle gegevens op de website staan.</p>
-          {{/* Velden voor formsubmit.co; _next, Pagina, yaml en de bijlage worden door assets/js/custom.js gevuld */}}
+          {{/* Velden voor formsubmit.co; Pagina, yaml en de bijlage worden door assets/js/custom.js gevuld */}}
           <input type="hidden" name="_subject" value="NIKH website: gegevens voor {{ $p.bestand }}" />
           <input type="hidden" name="_template" value="box" />
           <input type="hidden" name="_captcha" value="false" />
-          <input type="hidden" name="_next" />
           <input type="hidden" name="Foto" value="{{ $p.bestand }}" />
           <input type="hidden" name="Pagina" />
           <input type="hidden" name="yaml" />
@@ -144,6 +142,7 @@
           <label class="werk-form-vinkje"><input type="checkbox" name="omslag" value="ja"{{ if $p.omslag }} checked{{ end }} /> Omslagfoto (Werk-pagina en categorie)</label>
           <label>Beschrijving <textarea name="beschrijving" rows="6">{{ $velden.beschrijving }}</textarea></label>
           <button type="submit">Versturen</button>
+          <p class="werk-form-status" role="status" aria-live="polite" hidden></p>
         </form>
       {{ end }}
     </div>

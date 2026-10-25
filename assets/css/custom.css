@@ -365,9 +365,14 @@ main .home-caption h2 {
   border: 1px dashed var(--border);
 }
 
-.werk-form-verstuurd {
+.werk-form-status {
   padding: 0.75rem 1rem;
   border: 1px solid var(--border);
+}
+
+.werk-form-status.fout {
+  border-color: #c0392b;
+  color: #c0392b;
 }
 
 .werk-form-honey {
@@ -376,7 +381,7 @@ main .home-caption h2 {
 }
 
 .werk-form[hidden],
-.werk-form-verstuurd[hidden],
+.werk-form-status[hidden],
 .werk-beheer[hidden] {
   display: none;
 }
