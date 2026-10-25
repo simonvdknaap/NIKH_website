@@ -1,5 +1,5 @@
 ---
-description: Een voorbeeldwebsite voor NIKH (Herman Hopman)
+description: Het werk van Herman Hopman
 lastmod: 2025-12-20
 title: NIKH Gallerie
 resources:
