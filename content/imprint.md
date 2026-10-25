@@ -1,5 +1,5 @@
 ---
-title: Eerste versie van NIKH website
+title: NIKH | © 2026 Copyright Simon van der Knaap Fotografie. Alle rechten voorbehouden.
 rss_ignore: true
 layout: prose
 menu:
