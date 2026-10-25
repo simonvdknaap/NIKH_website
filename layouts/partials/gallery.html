@@ -1,5 +1,6 @@
 <section class="gallery">
-  <div id="gallery" style="visibility: hidden; height: 1px; overflow: hidden">
+  {{/* data-categorie: albums (Koppen, Penningen, ...); zie assets/js/gallery.js */}}
+  <div id="gallery" data-categorie style="visibility: hidden; height: 1px; overflow: hidden">
     {{ $images := slice }}
     {{ range $image := where (.Resources.ByType "image") "Params.hidden" "ne" true }}
       {{ $title := "" }}
@@ -31,7 +32,8 @@
     {{ $publishResources := default true .Params.build.publishResources }}
     {{ range sort $images (.Params.sort_by | default "Name") (.Params.sort_order | default "asc") }}
       {{ $image := .image }}
-      {{ $thumbnail := $image.Filter (slice images.AutoOrient (images.Process "fit 600x600")) }}
+      {{/* Minder dan 24 werken: grotere foto's (rijen van 2 of 3, zie assets/js/gallery.js) */}}
+      {{ $thumbnail := $image.Filter (slice images.AutoOrient (images.Process (cond (lt (len $images) 24) "fit 1000x1000" "fit 600x600"))) }}
       {{ $full := $image.Filter (slice images.AutoOrient (images.Process "fit 1600x1600")) }}
       {{ $color := index $thumbnail.Colors 0 | default "transparent" }}
       {{/* Foto's uit images/ linken naar de pagina van het werk in plaats van de lightbox */}}
