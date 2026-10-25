@@ -7,23 +7,21 @@
     {{/* Foto's van het werk: de hoofdfoto groot, bij meer foto's kleine foto's eronder om te wisselen */}}
     <div class="werk-fotos">
       {{ with .Resources.GetMatch .Params.afbeelding }}
-        {{ $full := .Filter (slice images.AutoOrient (images.Process "fit 1600x1600")) }}
         {{ $display := .Filter (slice images.AutoOrient (images.Process "fit 1000x1000")) }}
-        <a class="werk-afbeelding" href="{{ $full.RelPermalink }}" title="Vergroot">
+        <div class="werk-afbeelding">
           <img src="{{ $display.RelPermalink }}" width="{{ $display.Width }}" height="{{ $display.Height }}" alt="{{ $.Title }}" style="--r: {{ printf "%.4f" (div (float $display.Width) $display.Height) }}" />
           {{ if $beschikbaar }}<span class="te-koop-stip" title="Beschikbaar"></span>{{ end }}
-        </a>
+        </div>
       {{ end }}
       {{ $namen := .Params.afbeeldingen | default (slice .Params.afbeelding) }}
       {{ if gt (len $namen) 1 }}
         <div class="werk-miniaturen" role="list" aria-label="Foto's van dit werk">
           {{ range $i, $naam := $namen }}
             {{ with $.Resources.GetMatch $naam }}
-              {{ $full := .Filter (slice images.AutoOrient (images.Process "fit 1600x1600")) }}
               {{ $display := .Filter (slice images.AutoOrient (images.Process "fit 1000x1000")) }}
               {{ $thumb := .Filter (slice images.AutoOrient (images.Process "fill 160x160 Center")) }}
               <button type="button" role="listitem" aria-label="Foto {{ add $i 1 }}" aria-pressed="{{ eq $i 0 }}"
-                data-src="{{ $display.RelPermalink }}" data-width="{{ $display.Width }}" data-height="{{ $display.Height }}" data-full="{{ $full.RelPermalink }}">
+                data-src="{{ $display.RelPermalink }}" data-width="{{ $display.Width }}" data-height="{{ $display.Height }}">
                 <img src="{{ $thumb.RelPermalink }}" width="80" height="80" alt="" loading="lazy" />
               </button>
             {{ end }}
@@ -79,38 +77,74 @@
       {{ end }}
 
       {{/*
-        Beheer (alleen zichtbaar in beheermodus, ?beheer=1, zie assets/js/custom.js):
-        zonder .yaml-bestand een invulformulier; Opslaan opent GitHub met het
-        bestand images/<werk>.yaml al ingevuld, de kunstenaar klikt op Commit.
-        Met .yaml-bestand een knop om het op GitHub te bewerken.
+        Beheer (alleen zichtbaar in beheermodus, ?beheer=1, zie assets/js/custom.js).
+        Zolang niet alle velden zijn ingevuld (de vinkjes tellen niet mee) staat
+        hier een invulformulier met de bekende gegevens al ingevuld. Versturen
+        stuurt de gegevens met images/<werk>.yaml als bijlage naar het
+        e-mailadres; heeft het werk nog geen .yaml-bestand, dan opent GitHub
+        ook met dat bestand klaar om op te slaan.
       */}}
-      {{ with site.Params.github_repo }}
-        {{ $repo := . }}
-        {{ $branch := site.Params.github_branch | default "main" }}
-        {{ if $.Params.heeft_info }}
-          <p class="werk-beheer" hidden>
-            <a class="btn" href="https://github.com/{{ $repo }}/edit/{{ $branch }}/images/{{ $.Params.bestand }}.yaml" target="_blank" rel="noopener">Gegevens bewerken op GitHub</a>
-          </p>
-        {{ else }}
-          <form class="werk-form werk-beheer" hidden
-            data-repo="{{ $repo }}" data-branch="{{ $branch }}" data-bestand="{{ $.Params.bestand }}">
-            <h2>Gegevens invullen</h2>
-            <p>Voor dit werk is nog geen informatie. Vul de velden in en klik op
-              <em>Opslaan</em>: GitHub opent dan met het bestand
-              <code>images/{{ $.Params.bestand }}.yaml</code> klaar om op te slaan.</p>
-            <label>Titel <input name="titel" value="{{ $.Title }}" required /></label>
-            <label>Jaar <input name="jaar" inputmode="numeric" placeholder="bijv. 1987" /></label>
-            <label>Techniek <input name="techniek" placeholder="bijv. Gietwerk (verloren was)" /></label>
-            <label>Materiaal <input name="materiaal" placeholder="bijv. Brons, Hout" /></label>
-            <label>Afmetingen <input name="afmetingen" placeholder="bijv. 32 × 20 × 24 cm" /></label>
-            <label class="werk-form-vinkje"><input type="checkbox" name="beschikbaar" value="ja" /> Beschikbaar (te koop)</label>
-            <label>Personen <input name="tags" placeholder="bijv. Cleo, Anneke (gescheiden door komma's)" /></label>
-            <label class="werk-form-vinkje"><input type="checkbox" name="uitgelicht" value="ja" /> Uitgelicht op de startpagina</label>
-            <label class="werk-form-vinkje"><input type="checkbox" name="omslag" value="ja" /> Omslagfoto (Werk-pagina en categorie)</label>
-            <label>Beschrijving <textarea name="beschrijving" rows="6"></textarea></label>
-            <button type="submit">Opslaan</button>
-          </form>
-        {{ end }}
+      {{ $p := .Params }}
+      {{ $lijst := dict }}
+      {{ range slice "techniek" "materiaal" "tags" }}
+        {{ $w := index $p . }}
+        {{ $tekst := printf "%v" ($w | default "") }}
+        {{ if reflect.IsSlice $w }}{{ $tekst = delimit $w ", " }}{{ end }}
+        {{ $lijst = merge $lijst (dict . $tekst) }}
+      {{ end }}
+      {{ $velden := dict
+        "titel" (printf "%v" ($p.titel | default ""))
+        "jaar" (printf "%v" ($p.jaar | default ""))
+        "techniek" $lijst.techniek
+        "materiaal" $lijst.materiaal
+        "afmetingen" (printf "%v" ($p.afmetingen | default ""))
+        "tags" $lijst.tags
+        "beschrijving" (printf "%v" ($p.beschrijving | default ""))
+      }}
+      {{ $compleet := true }}
+      {{ range $velden }}{{ if eq (trim . " \n") "" }}{{ $compleet = false }}{{ end }}{{ end }}
+      {{ $uitgelicht := printf "%v" ($p.uitgelicht | default "") }}
+      {{ $repo := site.Params.github_repo }}
+      {{ $branch := site.Params.github_branch | default "main" }}
+      {{ if and $p.heeft_info $repo }}
+        <p class="werk-beheer" hidden>
+          <a class="btn" href="https://github.com/{{ $repo }}/edit/{{ $branch }}/images/{{ $p.bestand }}.yaml" target="_blank" rel="noopener">Gegevens bewerken op GitHub</a>
+        </p>
+      {{ end }}
+      {{ if and site.Params.formulier_email (not $compleet) }}
+        <form class="werk-form werk-beheer" hidden
+          action="https://formsubmit.co/{{ site.Params.formulier_email }}" method="POST" enctype="multipart/form-data"
+          data-bestand="{{ $p.bestand }}"
+          {{ if and $repo (not $p.heeft_info) }}data-repo="{{ $repo }}" data-branch="{{ $branch }}"{{ end }}
+          {{ if not (in (slice "" "true" "false") $uitgelicht) }}data-uitgelicht="{{ $uitgelicht }}"{{ end }}>
+          <h2>Gegevens invullen</h2>
+          <p>{{ if $p.heeft_info }}Voor dit werk ontbreken nog gegevens.{{ else }}Voor dit werk is nog geen informatie.{{ end }}
+            Vul de velden aan en klik op <em>Versturen</em>: de gegevens worden met het bestand
+            <code>images/{{ $p.bestand }}.yaml</code> als bijlage per e-mail verstuurd{{ if and $repo (not $p.heeft_info) }}
+            en GitHub opent met dat bestand klaar om op te slaan{{ end }}.</p>
+          <p class="werk-form-verstuurd" hidden>Verstuurd, dank je wel! Het formulier blijft staan tot alle gegevens op de website staan.</p>
+          {{/* Velden voor formsubmit.co; _next, Pagina, yaml en de bijlage worden door assets/js/custom.js gevuld */}}
+          <input type="hidden" name="_subject" value="NIKH website: gegevens voor {{ $p.bestand }}" />
+          <input type="hidden" name="_template" value="box" />
+          <input type="hidden" name="_captcha" value="false" />
+          <input type="hidden" name="_next" />
+          <input type="hidden" name="Foto" value="{{ $p.bestand }}" />
+          <input type="hidden" name="Pagina" />
+          <input type="hidden" name="yaml" />
+          <input type="file" name="attachment" hidden />
+          <input type="text" name="_honey" class="werk-form-honey" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <label>Titel <input name="titel" value="{{ $velden.titel | default .Title }}" required /></label>
+          <label>Jaar <input name="jaar" inputmode="numeric" placeholder="bijv. 1987" value="{{ $velden.jaar }}" /></label>
+          <label>Techniek <input name="techniek" placeholder="bijv. Gietwerk (verloren was)" value="{{ $velden.techniek }}" /></label>
+          <label>Materiaal <input name="materiaal" placeholder="bijv. Brons, Hout" value="{{ $velden.materiaal }}" /></label>
+          <label>Afmetingen <input name="afmetingen" placeholder="bijv. 32 × 20 × 24 cm" value="{{ $velden.afmetingen }}" /></label>
+          <label class="werk-form-vinkje"><input type="checkbox" name="beschikbaar" value="ja"{{ if or $p.beschikbaar $p.te_koop }} checked{{ end }} /> Beschikbaar (te koop)</label>
+          <label>Personen <input name="tags" placeholder="bijv. Cleo, Anneke (gescheiden door komma's)" value="{{ $velden.tags }}" /></label>
+          <label class="werk-form-vinkje"><input type="checkbox" name="uitgelicht" value="ja"{{ if not (in (slice "" "false") $uitgelicht) }} checked{{ end }} /> Uitgelicht op de startpagina</label>
+          <label class="werk-form-vinkje"><input type="checkbox" name="omslag" value="ja"{{ if $p.omslag }} checked{{ end }} /> Omslagfoto (Werk-pagina en categorie)</label>
+          <label>Beschrijving <textarea name="beschrijving" rows="6">{{ $velden.beschrijving }}</textarea></label>
+          <button type="submit">Versturen</button>
+        </form>
       {{ end }}
     </div>
   </article>

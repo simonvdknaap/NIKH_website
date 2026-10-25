@@ -21,6 +21,9 @@ theme = 'kaiser'
   # opslaat (via GitHub, zie assets/js/custom.js)
   github_repo = 'simonvdknaap/NIKH_website'
   github_branch = 'main'
+  # Het invulformulier stuurt de gegevens (met het .yaml-bestand als bijlage)
+  # naar dit adres, via formsubmit.co
+  formulier_email = '4.tannest.coconut@icloud.com'
 
 
 # Filters op de albumpagina's; elke waarde krijgt een eigen overzichtspagina
