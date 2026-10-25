@@ -13,7 +13,7 @@
     - werken met uitgelicht: "<naam>" -> precies die persoon/techniek/materiaal;
     - niets uitgelicht -> alle personen (of, zonder personen, alle technieken
       en materialen), met de foto van hun omslagwerk of hun eerste werk.
-    Bij meer dan één kandidaat wisselt het blok elke dag (assets/js/custom.js).
+    Bij meer dan één kandidaat toont elk bezoek het volgende (script hieronder).
   */}}
   {{ $albums := where .Pages "Params.private" "ne" true }}
   {{ $alle := sort (where site.RegularPages "Layout" "werk") "Params.afbeelding" }}
@@ -72,6 +72,24 @@
           {{ end }}
         {{ end }}
       </div>
+      {{/*
+        Bij elk bezoek aan de startpagina het volgende uitgelichte werk; de browser
+        onthoudt welk de vorige keer getoond werd. Dit staat direct na het blok,
+        zodat de keuze gemaakt is voordat het blok getekend wordt (geen flits).
+      */}}
+      {{ if gt (len $kandidaten) 1 }}
+        <script>
+          (function () {
+            var blok = document.currentScript.previousElementSibling;
+            var opties = blok.querySelectorAll(":scope > a");
+            var vorige = -1;
+            try { vorige = parseInt(localStorage.getItem("nikh-uitgelicht"), 10); } catch (e) {}
+            var keuze = isNaN(vorige) ? 0 : (vorige + 1) % opties.length;
+            try { localStorage.setItem("nikh-uitgelicht", keuze); } catch (e) {}
+            for (var i = 0; i < opties.length; i++) opties[i].hidden = i !== keuze;
+          })();
+        </script>
+      {{ end }}
     {{ end }}
 
     {{/* Categorieën; de foto is het werk met omslag: true (anders het eerste werk) */}}

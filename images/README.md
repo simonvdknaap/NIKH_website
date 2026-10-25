@@ -97,9 +97,10 @@ beschrijving: |
   startpagina. Het blok toont altijd een **persoon, techniek of materiaal**
   (nooit een categorie) en linkt naar die pagina: de persoon van het werk,
   anders de techniek, anders het materiaal. Wil je zelf kiezen, schrijf dan de
-  naam: `uitgelicht: "Brons"`. Bij meer uitgelichte werken wisselt het blok
-  elke dag. Zonder uitgelichte werken wisselt het tussen alle personen (of,
-  als die er nog niet zijn, alle technieken en materialen).
+  naam: `uitgelicht: "Brons"`. Bij meer uitgelichte werken toont elk bezoek
+  aan de startpagina het volgende (om de beurt). Zonder uitgelichte werken
+  wisselt het tussen alle personen (of, als die er nog niet zijn, alle
+  technieken en materialen).
 - `omslag: true` kiest de foto van dit werk voor de tegels op de Werk-pagina
   (van zijn categorie, personen, techniek en materiaal) en voor de tegel van
   de categorie op de startpagina. Heeft een tegel meer gekozen werken, dan
