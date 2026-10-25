@@ -340,3 +340,13 @@ if (beheerModus()) {
     });
   });
 }
+
+/*
+ * Tweede foto's (bij aanwijzen met de muis) na het laden van de pagina alvast
+ * ophalen, zodat ook de eerste keer wisselen rustig gaat.
+ */
+if (window.matchMedia("(hover: hover)").matches) {
+  window.addEventListener("load", () => {
+    document.querySelectorAll(".hover-foto[loading=lazy]").forEach((img) => (img.loading = "eager"));
+  });
+}

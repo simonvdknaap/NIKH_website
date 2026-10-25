@@ -163,9 +163,21 @@ const werkRijen = Array.from(document.querySelectorAll(".werk-rijen"));
 /*
  * Elke tegel toont elke dag een andere foto uit zijn groep (data-opties). De
  * keuze verschilt per tegel, zodat niet alle tegels tegelijk "doorschuiven".
+ * De categorieën (data-max-drie) wisselen niet per dag maar bij elk bezoek aan
+ * de Werk-pagina, net als het uitgelichte blok op de startpagina; de browser
+ * onthoudt hoeveelste bezoek het is.
  * Dit gebeurt vóór het indelen, want de verhouding van de foto telt mee.
  */
 const dag = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000);
+let bezoek = 0;
+if (document.querySelector(".werk-rijen[data-max-drie] .werk-tegel[data-opties]")) {
+  try {
+    bezoek = (parseInt(localStorage.getItem("nikh-werk-bezoek"), 10) || 0) + 1;
+    localStorage.setItem("nikh-werk-bezoek", bezoek);
+  } catch {
+    bezoek = Math.floor(Math.random() * 1000);
+  }
+}
 document.querySelectorAll(".werk-tegel[data-opties]").forEach((tegel) => {
   let opties;
   try {
@@ -174,7 +186,8 @@ document.querySelectorAll(".werk-tegel[data-opties]").forEach((tegel) => {
     return;
   }
   const verschuiving = Array.from(tegel.getAttribute("href")).reduce((som, teken) => som + teken.charCodeAt(0), 0);
-  const keuze = opties[(dag + verschuiving) % opties.length];
+  const teller = tegel.closest("[data-max-drie]") ? bezoek : dag;
+  const keuze = opties[(teller + verschuiving) % opties.length];
   const img = tegel.querySelector("img");
   img.src = keuze.s;
   img.setAttribute("width", keuze.w);
