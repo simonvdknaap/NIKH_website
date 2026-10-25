@@ -5,36 +5,68 @@
   </hgroup>
 
   {{/*
-    Galerijwand: eerst het uitgelichte werk (het grootste blok), dan de
-    categorieën. Uitgelicht worden de werken met uitgelicht: true in hun
-    .yaml-bestand; bij meer dan één wisselt het elke dag (assets/js/custom.js).
-    Zijn er geen, dan het eerste werk van elke categorie. Het blok linkt naar
-    de categorie van het werk.
+    Galerijwand: eerst het uitgelichte blok (het grootst), dan de categorieën.
+    Het blok toont altijd een persoon, techniek of materiaal, nooit een
+    categorie, en linkt naar die pagina. Kandidaten:
+    - werken met uitgelicht: true -> hun persoon (anders techniek, anders
+      materiaal), met de foto van dat werk;
+    - werken met uitgelicht: "<naam>" -> precies die persoon/techniek/materiaal;
+    - niets uitgelicht -> alle personen (of, zonder personen, alle technieken
+      en materialen), met de foto van hun omslagwerk of hun eerste werk.
+    Bij meer dan één kandidaat wisselt het blok elke dag (assets/js/custom.js).
   */}}
   {{ $albums := where .Pages "Params.private" "ne" true }}
   {{ $alle := sort (where site.RegularPages "Layout" "werk") "Params.afbeelding" }}
-  {{ $uitgelicht := where (where $alle "Params.uitgelicht" "!=" nil) "Params.uitgelicht" "!=" false }}
-  {{ if not $uitgelicht }}
-    {{ range $albums }}
-      {{ with index (sort (where .Pages "Layout" "werk") "Params.afbeelding") 0 }}{{ $uitgelicht = $uitgelicht | append . }}{{ end }}
+  {{ $groepen := slice "tags" "technieken" "materialen" }}
+  {{ $kandidaten := slice }}
+  {{ range where $alle "Params.uitgelicht" "!=" nil }}
+    {{ if ne (printf "%v" .Params.uitgelicht) "false" }}
+    {{ $werk := . }}
+    {{ $term := "" }}
+    {{ $naam := cond (eq (printf "%T" .Params.uitgelicht) "string") (lower .Params.uitgelicht) "" }}
+    {{ range $groepen }}
+      {{ range $werk.GetTerms . }}
+        {{ if and (not $term) (or (not $naam) (eq (lower .Title) $naam)) }}{{ $term = . }}{{ end }}
+      {{ end }}
+    {{ end }}
+    {{ with $term }}
+      {{ $kandidaten = $kandidaten | append (dict "werk" $werk "term" .) }}
+    {{ else }}
+      {{ warnf "%s: uitgelicht, maar het werk heeft geen (passende) persoon, techniek of materiaal" $werk.Params.bestand }}
+    {{ end }}
+    {{ end }}
+  {{ end }}
+  {{ if not $kandidaten }}
+    {{ $termen := slice }}
+    {{ with site.GetPage "/tags" }}{{ $termen = .Pages.ByTitle }}{{ end }}
+    {{ if not $termen }}
+      {{ range slice "technieken" "materialen" }}{{ with site.GetPage (printf "/%s" .) }}{{ $termen = $termen | append .Pages.ByTitle }}{{ end }}{{ end }}
+    {{ end }}
+    {{ range $term := $termen }}
+      {{ $werken := sort (where .Pages "Params.afbeelding" "!=" nil) "Params.afbeelding" }}
+      {{ with index (where (where $werken "Params.omslag" "!=" nil) "Params.omslag" "!=" false) 0 | default (index $werken 0) }}
+        {{ $kandidaten = $kandidaten | append (dict "werk" . "term" $term) }}
+      {{ end }}
     {{ end }}
   {{ end }}
 
   <section class="home-grid">
-    {{ with $uitgelicht }}
+    {{ with $kandidaten }}
       <div class="home-item home-featured" data-uitgelicht>
-        {{ range $i, $werk := . }}
+        {{ range $i, $k := . }}
+          {{ $werk := $k.werk }}
+          {{ $term := $k.term }}
           {{ with $werk.Resources.GetMatch $werk.Params.afbeelding }}
             {{ $img := .Filter (slice images.AutoOrient (images.Process "fit 1400x1400")) }}
             {{ $color := index $img.Colors 0 | default "transparent" }}
-            {{ $categorie := $werk.Parent }}
-            <a href="{{ $categorie.RelPermalink }}"{{ if gt $i 0 }} hidden{{ end }}>
+            {{ $aantal := len (where $term.Pages "Params.afbeelding" "!=" nil) }}
+            <a href="{{ $term.RelPermalink }}"{{ if gt $i 0 }} hidden{{ end }}>
               <figure style="background-color: {{ $color }}">
                 <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ $werk.Title }}" loading="lazy" />
               </figure>
               <div class="home-caption">
-                <h2>Uitgelicht: {{ $categorie.Title }}</h2>
-                <p>{{ $werk.Title }}</p>
+                <h2>Uitgelicht: {{ $term.Title }}</h2>
+                <p>{{ $aantal }} {{ cond (eq $aantal 1) "werk" "werken" }}</p>
               </div>
             </a>
           {{ end }}

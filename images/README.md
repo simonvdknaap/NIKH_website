@@ -93,10 +93,13 @@ beschrijving: |
   technieken en materialen staan onder **Werk** in het menu. Meerdere materialen schrijf je als lijst:
   `materiaal: ["Brons", "Hout"]` (in het formulier: gescheiden door
   komma's).
-- `uitgelicht: true` maakt het werk een kandidaat voor het grote uitgelichte
-  blok op de startpagina. Bij meer dan één wisselt het blok elke dag. Het blok
-  linkt naar de categorie van het werk. Zonder uitgelichte werken toont het
-  blok het eerste werk van elke categorie.
+- `uitgelicht: true` zet dit werk in het grote uitgelichte blok op de
+  startpagina. Het blok toont altijd een **persoon, techniek of materiaal**
+  (nooit een categorie) en linkt naar die pagina: de persoon van het werk,
+  anders de techniek, anders het materiaal. Wil je zelf kiezen, schrijf dan de
+  naam: `uitgelicht: "Brons"`. Bij meer uitgelichte werken wisselt het blok
+  elke dag. Zonder uitgelichte werken wisselt het tussen alle personen (of,
+  als die er nog niet zijn, alle technieken en materialen).
 - `omslag: true` kiest de foto van dit werk voor de tegels op de Werk-pagina
   (van zijn categorie, personen, techniek en materiaal) en voor de tegel van
   de categorie op de startpagina. Heeft een tegel meer gekozen werken, dan
