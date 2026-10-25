@@ -35,11 +35,12 @@
     {{ with .tegels }}
       <section class="werk-groep">
         <h2>{{ $titel }}</h2>
-        <div class="werk-rijen">
+        {{/* Categorieën: op groot scherm rijen van 2 of 3 tegels (assets/js/gallery.js) */}}
+        <div class="werk-rijen"{{ if eq $titel "Categorieën" }} data-max-drie{{ end }}>
           {{/* Op aantal werken (meeste eerst, bij gelijk aantal op naam); Overig altijd achteraan */}}
           {{ $gesorteerd := sort (sort . "naam") "aantal" "desc" }}
           {{ range (where $gesorteerd "laatst" "!=" true) | append (where $gesorteerd "laatst" true) }}
-            {{ partial "mozaiek-tegel.html" (dict "pagina" .pagina "werken" .werken) }}
+            {{ partial "mozaiek-tegel.html" (dict "pagina" .pagina "werken" .werken "groot" (eq $titel "Categorieën")) }}
           {{ end }}
         </div>
       </section>
