@@ -106,7 +106,7 @@ beschrijving: |
   de categorie op de startpagina. Heeft een tegel meer gekozen werken, dan
   wisselt hij elke dag; zonder gekozen werken wisselt hij tussen alle werken.
 - `tags` is een lijst van **personen** die het werk voorstelt (op de website
-  heet dit *Personen*). Elke tag
+  heet dit *Modellen*). Elke tag
   krijgt een eigen overzichtspagina met alle werken met die tag, uit alle
   categorieën (bijvoorbeeld `/tags/cleo/`; alle tags staan onder **Werk** in het
   menu). Op de pagina van een categorie kun je met knoppen boven de foto's

@@ -59,7 +59,7 @@
           <dd>{{ . }}</dd>
         {{ end }}
         {{ with .GetTerms "tags" }}
-          <dt>{{ cond (eq (len .) 1) "Persoon" "Personen" }}</dt>
+          <dt>{{ cond (eq (len .) 1) "Model" "Modellen" }}</dt>
           <dd class="werk-tags">
             {{ range . }}<a href="{{ .RelPermalink }}">{{ .LinkTitle }}</a>{{ end }}
           </dd>
@@ -139,7 +139,7 @@
           <label>Materiaal <input name="materiaal" placeholder="bijv. Brons, Hout" value="{{ $velden.materiaal }}" /></label>
           <label>Afmetingen <input name="afmetingen" placeholder="bijv. 32 × 20 × 24 cm" value="{{ $velden.afmetingen }}" /></label>
           <label class="werk-form-vinkje"><input type="checkbox" name="beschikbaar" value="ja"{{ if or $p.beschikbaar $p.te_koop }} checked{{ end }} /> Beschikbaar (te koop)</label>
-          <label>Personen <input name="tags" placeholder="bijv. Cleo, Anneke (gescheiden door komma's)" value="{{ $velden.tags }}" /></label>
+          <label>Modellen <input name="tags" placeholder="bijv. Cleo, Anneke (gescheiden door komma's)" value="{{ $velden.tags }}" /></label>
           <label class="werk-form-vinkje"><input type="checkbox" name="uitgelicht" value="ja"{{ if not (in (slice "" "false") $uitgelicht) }} checked{{ end }} /> Uitgelicht op de startpagina</label>
           <label class="werk-form-vinkje"><input type="checkbox" name="omslag" value="ja"{{ if $p.omslag }} checked{{ end }} /> Omslagfoto (Werk-pagina en categorie)</label>
           <label>Beschrijving <textarea name="beschrijving" rows="6">{{ $velden.beschrijving }}</textarea></label>
