@@ -1,6 +1,10 @@
 <section class="gallery">
-  {{/* data-categorie: albums (Koppen, Penningen, ...); zie assets/js/gallery.js */}}
-  <div id="gallery" data-categorie style="visibility: hidden; height: 1px; overflow: hidden">
+  {{/*
+    data-categorie: albums (Koppen, Penningen, ...); zie assets/js/gallery.js.
+    rij_max / rij_eerste in het album (_index.md): op groot scherm hoogstens
+    zoveel foto's per rij, en bovenaan een rij met precies rij_eerste foto's.
+  */}}
+  <div id="gallery" data-categorie{{ with .Params.rij_max }} data-rij-max="{{ . }}"{{ end }}{{ with .Params.rij_eerste }} data-rij-eerste="{{ . }}"{{ end }} style="visibility: hidden; height: 1px; overflow: hidden">
     {{ $images := slice }}
     {{ range $image := where (.Resources.ByType "image") "Params.hidden" "ne" true }}
       {{ $title := "" }}

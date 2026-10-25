@@ -7,18 +7,21 @@ import * as params from "@params";
  * fotogalerij van albums (#gallery) en voor de Werk-pagina (.werk-rijen).
  */
 /*
- * Rijen van 2 of 3 foto's die precies de breedte vullen (voor categorieën met
- * weinig werken op groot scherm). De verdeling in rijen van 2 en 3 wordt zo
- * gekozen dat de rijen zo gelijk mogelijk van hoogte zijn. Alleen de laatste
- * rij mag minder foto's hebben; die wordt niet hoger dan de andere rijen en
- * laat dan rechts ruimte over.
+ * Rijen van 2 tot max (standaard 3) foto's die precies de breedte vullen (voor
+ * categorieën met weinig werken op groot scherm, of met rij_max in het album).
+ * De verdeling wordt zo gekozen dat de rijen zo gelijk mogelijk van hoogte
+ * zijn; met eerste staat er bovenaan een rij met precies zoveel foto's. Alleen
+ * de laatste rij mag minder foto's hebben; die wordt niet hoger dan de andere
+ * rijen en laat dan rechts ruimte over.
  */
-function rijenVanTweeOfDrie(ratios, { rowWidth, spacing }) {
+function rijenMetMaximum(ratios, { rowWidth, spacing, max = 3, eerste = 0, drieEerst }) {
   const n = ratios.length;
   const hoogte = (van, tot) => (rowWidth - (tot - van - 1) * spacing) / ratios.slice(van, tot).reduce((a, b) => a + b, 0);
   const sorted = [...ratios].sort((a, b) => a - b);
   const mediaan = sorted[Math.floor(n / 2)] || 1;
-  const doel = rowWidth / (2.5 * mediaan);
+  const doel = rowWidth / ((max - 0.5) * mediaan);
+  const maten = [1];
+  for (let k = 2; k <= max; k++) maten.push(k);
   const afwijking = (h) => Math.log(h / doel) ** 2;
 
   // kosten[i] = beste verdeling van foto i tot het eind
@@ -26,7 +29,7 @@ function rijenVanTweeOfDrie(ratios, { rowWidth, spacing }) {
   const stap = new Array(n + 1).fill(0);
   kosten[n] = 0;
   for (let i = n - 1; i >= 0; i--) {
-    for (const k of [2, 3, 1]) {
+    for (const k of maten) {
       if (i + k > n) continue;
       const laatste = i + k === n;
       // Rijen van 1 alleen als laatste rij (of als er maar 1 foto is)
@@ -40,6 +43,11 @@ function rijenVanTweeOfDrie(ratios, { rowWidth, spacing }) {
       }
     }
   }
+
+  // eerste: bovenaan een rij met precies zoveel foto's, daarna de beste verdeling
+  if (eerste && n > eerste) stap[0] = eerste;
+  // drieEerst: van boven af rijen van 3, de rest in de laatste rij
+  if (drieEerst) for (let i = 0; i < n; i += 3) stap[i] = Math.min(3, n - i);
 
   const boxes = [];
   let top = 0;
@@ -60,7 +68,7 @@ function rijenVanTweeOfDrie(ratios, { rowWidth, spacing }) {
   return { boxes, containerHeight: Math.max(0, top - spacing) };
 }
 
-function deelIn(container, { itemSelector, rowHeight, spacing, imgHeight, onLayout, labelsOnder, kleineRijen }) {
+function deelIn(container, { itemSelector, rowHeight, spacing, imgHeight, onLayout, labelsOnder, kleineRijen, drieEerst, rijOpties }) {
   let containerWidth = 0;
   const items = container.querySelectorAll(itemSelector);
 
@@ -79,9 +87,11 @@ function deelIn(container, { itemSelector, rowHeight, spacing, imgHeight, onLayo
     // Alleen zichtbare foto's indelen; verborgen foto's (filter) overslaan
     const visible = Array.from(items).map((item, i) => [item, aspectRatios[i]]).filter(([item]) => !item.hidden);
 
-    const layout = (kleineRijen && kleineRijen() ? rijenVanTweeOfDrie : justifiedLayout)(
+    const layout = (kleineRijen && kleineRijen() ? rijenMetMaximum : justifiedLayout)(
       visible.map(([, ratio]) => ratio),
       {
+        drieEerst,
+        ...(rijOpties || {}),
         rowWidth: containerWidth,
         spacing: spacing(),
         rowHeight: rowHeight(),
@@ -142,14 +152,19 @@ const gallery = document.getElementById("gallery");
 const groot = window.matchMedia("(min-width: 900px)");
 
 if (gallery) {
-  // Categorie met minder dan 24 werken: op groot scherm rijen van 2 of 3 foto's
-  const weinig = gallery.hasAttribute("data-categorie") && gallery.querySelectorAll(".gallery-item").length < 24;
+  // Categorie met minder dan 24 werken: op groot scherm rijen van 2 of 3 foto's.
+  // Een album kan dit ook zelf instellen (rij_max en rij_eerste, zie gallery.html).
+  const max = parseInt(gallery.dataset.rijMax, 10);
+  const eerste = parseInt(gallery.dataset.rijEerste, 10) || 0;
+  const weinig =
+    (gallery.hasAttribute("data-categorie") && gallery.querySelectorAll(".gallery-item").length < 24) || max > 0;
   deelIn(gallery, {
     itemSelector: ".gallery-item",
     rowHeight: () => params.targetRowHeight || 288,
     spacing: () => (Number.isInteger(params.boxSpacing) ? params.boxSpacing : 8),
     imgHeight: "auto",
     kleineRijen: () => weinig && groot.matches,
+    rijOpties: { max: max || 3, eerste },
   });
 }
 
@@ -211,6 +226,8 @@ const werkUpdates = werkRijen.map((container) =>
     onLayout: () => container.classList.add("ingedeeld"),
     labelsOnder: () => labelsOnder,
     kleineRijen: () => groot.matches && container.hasAttribute("data-max-drie"),
+    // Categorieën: bovenaan 3 tegels naast elkaar
+    drieEerst: container.hasAttribute("data-max-drie"),
   }),
 );
 
