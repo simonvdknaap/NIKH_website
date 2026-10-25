@@ -197,6 +197,7 @@ const werkUpdates = werkRijen.map((container) =>
     imgHeight: "100%",
     onLayout: () => container.classList.add("ingedeeld"),
     labelsOnder: () => labelsOnder,
+    kleineRijen: () => groot.matches && container.hasAttribute("data-max-drie"),
   }),
 );
 

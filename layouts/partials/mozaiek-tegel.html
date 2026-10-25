@@ -2,22 +2,23 @@
   Eén tegel op de Werk-pagina: een foto in zijn eigen verhouding (niet
   bijgesneden), met de naam en het aantal werken als label linksonder.
   Context: dict "pagina" (waar de tegel naartoe linkt) en "werken" (de werken
-  in deze groep).
+  in deze groep), optioneel "groot" (grotere foto's, voor de categorieën).
   Getoond worden de werken met omslag: true in hun .yaml-bestand; zijn er geen,
   dan alle werken. Bij meer dan één wisselt de foto elke dag
   (assets/js/gallery.js); zonder JavaScript de eerste. Bij aanwijzen met de
   muis verschijnt de tweede foto van dat werk, als die er is.
 */}}
+{{ $maat := cond (eq .groot true) "fit 1000x1000" "fit 600x600" }}
 {{ $werken := sort .werken "Params.afbeelding" }}
 {{ $gekozen := where (where $werken "Params.omslag" "!=" nil) "Params.omslag" "!=" false }}
 {{ $opties := slice }}
 {{ range ($gekozen | default $werken) }}
   {{ $werk := . }}
   {{ with .Resources.GetMatch .Params.afbeelding }}
-    {{ $img := .Filter (slice images.AutoOrient (images.Process "fit 600x600")) }}
+    {{ $img := .Filter (slice images.AutoOrient (images.Process $maat)) }}
     {{ $optie := dict "s" $img.RelPermalink "w" $img.Width "h" $img.Height "c" (index $img.Colors 0 | default "transparent") "s2" "" }}
     {{ with partial "tweede-foto.html" $werk }}
-      {{ $optie = merge $optie (dict "s2" (.Filter (slice images.AutoOrient (images.Process "fit 600x600"))).RelPermalink) }}
+      {{ $optie = merge $optie (dict "s2" (.Filter (slice images.AutoOrient (images.Process $maat))).RelPermalink) }}
     {{ end }}
     {{ $opties = $opties | append $optie }}
   {{ end }}
