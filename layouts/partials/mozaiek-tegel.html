@@ -1,25 +1,37 @@
 {{/*
   Eén tegel op de Werk-pagina: een foto in zijn eigen verhouding (niet
   bijgesneden), met de naam en het aantal werken als label linksonder.
-  Context: dict "pagina" (waar de tegel naartoe linkt), "fotos" (de hoofdfoto's
-  van de werken in deze groep) en "aantal" (aantal werken).
-  Elke dag toont de tegel een andere foto uit "fotos" (assets/js/gallery.js);
-  zonder JavaScript de eerste.
+  Context: dict "pagina" (waar de tegel naartoe linkt) en "werken" (de werken
+  in deze groep).
+  Getoond worden de werken met omslag: true in hun .yaml-bestand; zijn er geen,
+  dan alle werken. Bij meer dan één wisselt de foto elke dag
+  (assets/js/gallery.js); zonder JavaScript de eerste. Bij aanwijzen met de
+  muis verschijnt de tweede foto van dat werk, als die er is.
 */}}
+{{ $werken := sort .werken "Params.afbeelding" }}
+{{ $gekozen := where (where $werken "Params.omslag" "!=" nil) "Params.omslag" "!=" false }}
 {{ $opties := slice }}
-{{ range .fotos }}
-  {{ $img := .Filter (slice images.AutoOrient (images.Process "fit 600x600")) }}
-  {{ $opties = $opties | append (dict "s" $img.RelPermalink "w" $img.Width "h" $img.Height "c" (index $img.Colors 0 | default "transparent")) }}
+{{ range ($gekozen | default $werken) }}
+  {{ $werk := . }}
+  {{ with .Resources.GetMatch .Params.afbeelding }}
+    {{ $img := .Filter (slice images.AutoOrient (images.Process "fit 600x600")) }}
+    {{ $optie := dict "s" $img.RelPermalink "w" $img.Width "h" $img.Height "c" (index $img.Colors 0 | default "transparent") "s2" "" }}
+    {{ with partial "tweede-foto.html" $werk }}
+      {{ $optie = merge $optie (dict "s2" (.Filter (slice images.AutoOrient (images.Process "fit 600x600"))).RelPermalink) }}
+    {{ end }}
+    {{ $opties = $opties | append $optie }}
+  {{ end }}
 {{ end }}
 {{ with index $opties 0 }}
   {{ $r := div (float .w) .h }}
   <a class="werk-tegel" href="{{ $.pagina.RelPermalink }}" style="--r: {{ printf "%.4f" $r }}"{{ if gt (len $opties) 1 }} data-opties="{{ $opties | jsonify }}"{{ end }}>
     <figure style="background-color: {{ .c }}">
       <img src="{{ .s }}" width="{{ .w }}" height="{{ .h }}" alt="{{ $.pagina.Title }}" loading="lazy" />
+      <img class="hover-foto" src="{{ .s2 }}" alt="" loading="lazy"{{ if not .s2 }} hidden{{ end }} />
     </figure>
     <div class="home-caption">
       <h2>{{ $.pagina.Title }}</h2>
-      <p>{{ $.aantal }} {{ cond (eq $.aantal 1) "werk" "werken" }}</p>
+      <p>{{ len $.werken }} {{ cond (eq (len $.werken) 1) "werk" "werken" }}</p>
     </div>
   </a>
 {{ end }}

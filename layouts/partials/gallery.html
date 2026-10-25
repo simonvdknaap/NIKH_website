@@ -43,6 +43,11 @@
       <a class="gallery-item{{ if $werk }} werk-link{{ end }}" data-tags="{{ $filters.tags }}" data-technieken="{{ $filters.technieken }}" data-materialen="{{ $filters.materialen }}" href="{{ with $werk }}{{ .RelPermalink }}{{ else }}{{ if $publishResources }}{{ $image.RelPermalink }}{{ else }}{{ $full.RelPermalink }}{{ end }}{{ end }}" data-pswp-src="{{ $full.RelPermalink }}" data-pswp-width="{{ $full.Width }}" data-pswp-height="{{ $full.Height }}" data-pswp-target="{{ $image.Name | urlize }}" title="{{ .Title }}" itemscope itemtype="https://schema.org/ImageObject" style="aspect-ratio: {{ $thumbnail.Width }} / {{ $thumbnail.Height }}">
         <figure style="background-color: {{ $color }}; aspect-ratio: {{ $thumbnail.Width }} / {{ $thumbnail.Height }}">
           <img class="lazyload" width="{{ $thumbnail.Width }}" height="{{ $thumbnail.Height }}" data-src="{{ $thumbnail.RelPermalink }}" alt="{{ .Title }}" />
+          {{/* Tweede foto van het werk, zichtbaar bij aanwijzen met de muis */}}
+          {{ with $werk }}{{ with partial "tweede-foto.html" . }}
+            {{ $t2 := .Filter (slice images.AutoOrient (images.Process "fit 600x600")) }}
+            <img class="hover-foto" src="{{ $t2.RelPermalink }}" alt="" loading="lazy" />
+          {{ end }}{{ end }}
         </figure>
         <meta itemprop="contentUrl" content="{{ if $publishResources }}{{ $image.RelPermalink }}{{ else }}{{ $full.RelPermalink }}{{ end }}" />
         {{ with site.Params.Author }}

@@ -123,6 +123,11 @@ document.querySelectorAll(".werk-tegel[data-opties]").forEach((tegel) => {
   img.setAttribute("width", keuze.w);
   img.setAttribute("height", keuze.h);
   tegel.querySelector("figure").style.backgroundColor = keuze.c;
+  const hover = tegel.querySelector(".hover-foto");
+  if (hover) {
+    hover.hidden = !keuze.s2;
+    if (keuze.s2) hover.src = keuze.s2;
+  }
   tegel.style.setProperty("--r", keuze.w / keuze.h);
 });
 let labelsOnder = false;

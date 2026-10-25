@@ -773,3 +773,35 @@ main .werk-tegel .home-caption h2 {
 p.werk-beheer {
   margin-top: 1.5rem;
 }
+
+/*
+ * Tweede foto van een werk, zichtbaar bij aanwijzen met de muis (alleen op
+ * apparaten met een muis; op een telefoon blijft de eerste foto staan).
+ */
+.gallery-item figure,
+.werk-tegel figure,
+.home-item figure {
+  position: relative;
+}
+
+.hover-foto {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+.hover-foto[hidden] {
+  display: none;
+}
+
+@media (hover: hover) {
+  a:hover .hover-foto,
+  a:focus-visible .hover-foto {
+    opacity: 1;
+  }
+}
