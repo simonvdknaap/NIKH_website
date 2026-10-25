@@ -1,23 +1,24 @@
 {{/*
-  Werk: alles op één pagina, per groep: categorieën, materialen, personen
-  (tags) en technieken, elk als rijen foto's in hun eigen verhouding.
+  Werk: alles op één pagina, per groep: categorieën, materialen, technieken
+  en personen (tags), elk als rijen foto's in hun eigen verhouding.
   Welke foto's een tegel toont kies je met omslag: true (mozaiek-tegel.html).
 */}}
 {{ define "main" }}
   {{ partial "title.html" . }}
 
   {{/*
-    Volgorde: categorieën, materialen, personen, technieken. Binnen elke groep
-    op aantal werken (meeste eerst; bij gelijk aantal op naam).
+    Volgorde: categorieën, materialen, technieken, personen. Binnen elke groep
+    op aantal werken (meeste eerst; bij gelijk aantal op naam); de categorie
+    Overig staat altijd achteraan.
   */}}
   {{ $groepen := slice }}
   {{ $albums := slice }}
   {{ range where site.Home.Pages "Params.private" "ne" true }}
     {{ $werken := where .Pages "Layout" "werk" }}
-    {{ if $werken }}{{ $albums = $albums | append (dict "pagina" . "werken" $werken "aantal" (len $werken) "naam" .Title) }}{{ end }}
+    {{ if $werken }}{{ $albums = $albums | append (dict "pagina" . "werken" $werken "aantal" (len $werken) "naam" .Title "laatst" (eq .Section "overig")) }}{{ end }}
   {{ end }}
   {{ $groepen = $groepen | append (dict "titel" "Categorieën" "tegels" $albums) }}
-  {{ range slice (slice "materialen" "Materialen") (slice "tags" "Personen") (slice "technieken" "Technieken") }}
+  {{ range slice (slice "materialen" "Materialen") (slice "technieken" "Technieken") (slice "tags" "Personen") }}
     {{ $titel := index . 1 }}
     {{ $tegels := slice }}
     {{ with site.GetPage (printf "/%s" (index . 0)) }}
@@ -35,7 +36,9 @@
       <section class="werk-groep">
         <h2>{{ $titel }}</h2>
         <div class="werk-rijen">
-          {{ range sort (sort . "naam") "aantal" "desc" }}
+          {{/* Op aantal werken (meeste eerst, bij gelijk aantal op naam); Overig altijd achteraan */}}
+          {{ $gesorteerd := sort (sort . "naam") "aantal" "desc" }}
+          {{ range (where $gesorteerd "laatst" "!=" true) | append (where $gesorteerd "laatst" true) }}
             {{ partial "mozaiek-tegel.html" (dict "pagina" .pagina "werken" .werken) }}
           {{ end }}
         </div>
