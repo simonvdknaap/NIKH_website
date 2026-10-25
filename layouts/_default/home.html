@@ -5,45 +5,43 @@
   </hgroup>
 
   {{/*
-    Galerijwand: eerst een uitgelichte tag (het grootste blok), dan de
-    categorieën. Welke tag wordt uitgelicht wisselt elke dag (assets/js/custom.js);
-    zonder JavaScript is het de eerste.
+    Galerijwand met 5 uitgelichte werken. Kies ze zelf met uitgelicht: 1 t/m 5
+    in het .yaml-bestand van een werk (1 = de grote tegel). Zijn er minder dan
+    5 gekozen, dan wordt de rest aangevuld met een werk uit elke categorie.
   */}}
-  <section class="home-grid">
-    {{ with site.GetPage "/tags" }}
-      {{ with .Pages.ByTitle }}
-        <div class="home-item home-featured" data-uitgelicht>
-          {{ range $i, $tag := . }}
-            {{ $werken := where $tag.Pages "Params.afbeelding" "!=" nil }}
-            {{ with index (sort $werken "Params.afbeelding") 0 }}
-              {{ with .Resources.GetMatch .Params.afbeelding }}
-                {{ $img := .Filter (slice images.AutoOrient (images.Process "fit 1400x1400")) }}
-                {{ $color := index $img.Colors 0 | default "transparent" }}
-                <a href="{{ $tag.RelPermalink }}"{{ if gt $i 0 }} hidden{{ end }}>
-                  <figure style="background-color: {{ $color }}">
-                    <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ $tag.Title }}" loading="lazy" />
-                  </figure>
-                  <div class="home-caption">
-                    <h2>Uitgelicht: {{ $tag.Title }}</h2>
-                    <p>{{ len $werken }} {{ cond (eq (len $werken) 1) "werk" "werken" }}</p>
-                  </div>
-                </a>
-              {{ end }}
-            {{ end }}
+  {{ $alle := where site.RegularPages "Layout" "werk" }}
+  {{ $tegels := first 5 (sort (where $alle "Params.uitgelicht" "!=" nil) "Params.uitgelicht") }}
+  {{ $gebruikt := slice }}
+  {{ range $tegels }}{{ $gebruikt = $gebruikt | append .RelPermalink }}{{ end }}
+  {{/* Aanvullen: om de beurt het eerstvolgende werk uit elke categorie */}}
+  {{ $albums := where site.Home.Pages "Params.private" "ne" true }}
+  {{ range seq 20 }}
+    {{ $ronde := . }}
+    {{ range $albums }}
+      {{ if lt (len $tegels) 5 }}
+        {{ $werken := sort (where .Pages "Layout" "werk") "Params.afbeelding" }}
+        {{ with index $werken (sub $ronde 1) }}
+          {{ if not (in $gebruikt .RelPermalink) }}
+            {{ $tegels = $tegels | append . }}
+            {{ $gebruikt = $gebruikt | append .RelPermalink }}
           {{ end }}
-        </div>
+        {{ end }}
       {{ end }}
     {{ end }}
+  {{ end }}
 
-    {{ range where .Pages "Params.private" "ne" true }}
-      {{ with partial "get-gallery.html" . }}
-        <a class="home-item home-album" href="{{ .page.RelPermalink }}">
-          <figure style="background-color: {{ .color }}">
-            <img src="{{ .thumbnail.RelPermalink }}" width="{{ .thumbnail.Width }}" height="{{ .thumbnail.Height }}" alt="{{ .page.Title }}" loading="lazy" />
+  <section class="home-grid">
+    {{ range $i, $werk := $tegels }}
+      {{ with $werk.Resources.GetMatch $werk.Params.afbeelding }}
+        {{ $img := .Filter (slice images.AutoOrient (images.Process (cond (eq $i 0) "fit 1400x1400" "fit 1000x1000"))) }}
+        {{ $color := index $img.Colors 0 | default "transparent" }}
+        <a class="home-item home-album" href="{{ $werk.RelPermalink }}">
+          <figure style="background-color: {{ $color }}">
+            <img src="{{ $img.RelPermalink }}" width="{{ $img.Width }}" height="{{ $img.Height }}" alt="{{ $werk.Title }}"{{ if gt $i 0 }} loading="lazy"{{ end }} />
           </figure>
           <div class="home-caption">
-            <h2>{{ .page.Title }}</h2>
-            <p>{{ T "photoCount" (.imageCount | lang.FormatNumber 0) }}</p>
+            <h2>{{ $werk.Title }}</h2>
+            {{ with $werk.Parent }}<p>{{ .Title }}</p>{{ end }}
           </div>
         </a>
       {{ end }}

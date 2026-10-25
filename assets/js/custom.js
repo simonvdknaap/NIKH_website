@@ -48,19 +48,6 @@ if (tagFilter) {
 }
 
 /*
- * Startpagina: het uitgelichte blok toont elke dag een andere tag.
- * Alle tags staan in de pagina; hier wordt er één zichtbaar gemaakt.
- */
-const uitgelicht = document.querySelector("[data-uitgelicht]");
-
-if (uitgelicht) {
-  const opties = uitgelicht.querySelectorAll(":scope > a");
-  const dag = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000);
-  const keuze = dag % opties.length;
-  opties.forEach((optie, i) => (optie.hidden = i !== keuze));
-}
-
-/*
  * Werkpagina met meerdere foto's: klik op een kleine foto om hem groot te tonen.
  */
 document.querySelectorAll(".werk-fotos").forEach((fotos) => {
@@ -144,6 +131,7 @@ function maakYaml(form) {
     else regels.push(`${veld}: ${yamlWaarde(value)}`);
   }
   if (data.get("beschikbaar")) regels.push("beschikbaar: true");
+  if (/^[1-5]$/.test(data.get("uitgelicht") || "")) regels.push(`uitgelicht: ${data.get("uitgelicht")}`);
   const tags = (data.get("tags") || "")
     .split(",")
     .map((tag) => tag.trim())
