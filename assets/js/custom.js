@@ -67,6 +67,19 @@ document.querySelectorAll(".werk-fotos").forEach((fotos) => {
 });
 
 /*
+ * Startpagina: bij meer dan één uitgelicht werk toont het grote blok elke dag
+ * een ander. Ze staan allemaal in de pagina; hier wordt er één zichtbaar.
+ */
+const uitgelicht = document.querySelector("[data-uitgelicht]");
+
+if (uitgelicht) {
+  const opties = uitgelicht.querySelectorAll(":scope > a");
+  const dag = Math.floor((Date.now() - new Date().getTimezoneOffset() * 60000) / 86400000);
+  const keuze = dag % opties.length;
+  opties.forEach((optie, i) => (optie.hidden = i !== keuze));
+}
+
+/*
  * Categorie-, persoon-, techniek- en materiaalpagina's (o.a. via het
  * uitgelichte blok op de startpagina): "Terug naar Home" als je van de
  * startpagina kwam, anders "Terug naar Werk". Bij terugkomen van een werk
@@ -131,7 +144,8 @@ function maakYaml(form) {
     else regels.push(`${veld}: ${yamlWaarde(value)}`);
   }
   if (data.get("beschikbaar")) regels.push("beschikbaar: true");
-  if (/^[1-5]$/.test(data.get("uitgelicht") || "")) regels.push(`uitgelicht: ${data.get("uitgelicht")}`);
+  if (data.get("uitgelicht")) regels.push("uitgelicht: true");
+  if (data.get("omslag")) regels.push("omslag: true");
   const tags = (data.get("tags") || "")
     .split(",")
     .map((tag) => tag.trim())

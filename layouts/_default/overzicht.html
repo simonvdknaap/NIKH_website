@@ -1,26 +1,25 @@
 {{/*
   Werk: alles op één pagina, per groep: categorieën, personen (tags),
   technieken en materialen, elk als rijen foto's in hun eigen verhouding.
-  Elke tegel toont elke dag een andere foto uit die groep (mozaiek-tegel.html).
+  Welke foto's een tegel toont kies je met omslag: true (mozaiek-tegel.html).
 */}}
 {{ define "main" }}
   {{ partial "title.html" . }}
 
-  {{/* Categorieën: de albums (de hoofdfoto's van hun werken) */}}
+  {{/* Categorieën: de albums */}}
   {{ with where site.Home.Pages "Params.private" "ne" true }}
     <section class="werk-groep">
       <h2>Categorieën</h2>
       <div class="werk-rijen">
         {{ range . }}
-          {{ with partial "get-gallery.html" . }}
-            {{ partial "mozaiek-tegel.html" (dict "pagina" .page "fotos" (sort .images "Name") "aantal" .imageCount) }}
-          {{ end }}
+          {{ $werken := where .Pages "Layout" "werk" }}
+          {{ if $werken }}{{ partial "mozaiek-tegel.html" (dict "pagina" . "werken" $werken) }}{{ end }}
         {{ end }}
       </div>
     </section>
   {{ end }}
 
-  {{/* Personen, technieken, materialen: de hoofdfoto's van hun werken */}}
+  {{/* Personen, technieken, materialen */}}
   {{ range slice (slice "tags" "Personen") (slice "technieken" "Technieken") (slice "materialen" "Materialen") }}
     {{ $titel := index . 1 }}
     {{ with site.GetPage (printf "/%s" (index . 0)) }}
@@ -29,10 +28,8 @@
           <h2>{{ $titel }}</h2>
           <div class="werk-rijen">
             {{ range . }}
-              {{ $werken := sort (where .Pages "Params.afbeelding" "!=" nil) "Params.afbeelding" }}
-              {{ $fotos := slice }}
-              {{ range $werken }}{{ with .Resources.GetMatch .Params.afbeelding }}{{ $fotos = $fotos | append . }}{{ end }}{{ end }}
-              {{ partial "mozaiek-tegel.html" (dict "pagina" . "fotos" $fotos "aantal" (len $werken)) }}
+              {{ $werken := where .Pages "Params.afbeelding" "!=" nil }}
+              {{ if $werken }}{{ partial "mozaiek-tegel.html" (dict "pagina" . "werken" $werken) }}{{ end }}
             {{ end }}
           </div>
         </section>

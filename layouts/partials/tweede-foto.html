@@ -1,0 +1,8 @@
+{{/* De tweede foto van een werk (voor het wisselen bij aanwijzen met de muis), of "" als die er niet is */}}
+{{ $foto := "" }}
+{{ with .Params.afbeeldingen }}
+  {{ if gt (len .) 1 }}
+    {{ with $.Resources.GetMatch (index . 1) }}{{ $foto = . }}{{ end }}
+  {{ end }}
+{{ end }}
+{{ return $foto }}
